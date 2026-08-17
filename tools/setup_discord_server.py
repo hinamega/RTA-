@@ -107,24 +107,24 @@ async def setup_server(guild: discord.Guild):
     await guild.create_text_channel("リハーサル日程調整", category=cat_runner, topic="事前接続テスト・リハの日程すり合わせ")
     await guild.create_text_channel("走者控室・雑談", category=cat_runner, topic="走者・解説同士の交流・情報交換用")
 
-    # --- カテゴリ 3: 本番・控室通話（VC） ---
+    # --- カテゴリ 3: 進行・解説通話（VC） ---
     cat_vc_overwrites = {
         everyone_role: PermissionOverwrite(view_channel=True, connect=False),
         role_runner: PermissionOverwrite(view_channel=True, connect=True, speak=True),
         role_commentator: PermissionOverwrite(view_channel=True, connect=True, speak=True),
         role_admin: PermissionOverwrite(view_channel=True, connect=True, speak=True, move_members=True),
     }
-    cat_vc = await guild.create_category("🎙️ 本番・控室通話", overwrites=cat_vc_overwrites)
-    print(f"  + カテゴリ '🎙️ 本番・控室通話' を作成（VC入室制限設定）")
+    cat_vc = await guild.create_category("🎙️ 進行・解説通話", overwrites=cat_vc_overwrites)
+    print(f"  + カテゴリ '🎙️ 進行・解説通話' を作成（VC入室制限設定）")
 
-    # 本番配信ステージ（定員4人）
+    # 解説・実況通話（解説がいるゲームでOBSに音声を乗せる部屋）
     await guild.create_voice_channel(
-        "🔴 本番配信ステージ",
+        "🎙️ 解説・実況通話",
         category=cat_vc,
-        user_limit=4
+        user_limit=5
     )
-    # 待機控室
-    await guild.create_voice_channel("⏳ 次走者・待機控室", category=cat_vc)
+    # 点呼・待機控室（出番前の走者との配信確認・点呼用）
+    await guild.create_voice_channel("⏳ 点呼・待機控室", category=cat_vc)
     # 接続テスト用
     await guild.create_voice_channel("🔧 接続テスト・リハ用VC", category=cat_vc)
     
