@@ -117,15 +117,16 @@ async def setup_server(guild: discord.Guild):
         category=cat_info,
         topic="募集開始、当落発表、タイムテーブル公開などの重要告知です。"
     )
+    # 質問チャンネルは誰でも（@everyoneでも）質問可能に設定（連投防止でスローモード5秒）
     q_overwrites = {
-        everyone_role: PermissionOverwrite(view_channel=True, send_messages=False),
-        role_applicant: PermissionOverwrite(view_channel=True, send_messages=True),
-        role_admin: PermissionOverwrite(view_channel=True, send_messages=True),
+        everyone_role: PermissionOverwrite(view_channel=True, send_messages=True, add_reactions=True),
+        role_admin: PermissionOverwrite(view_channel=True, send_messages=True, manage_messages=True),
     }
     await guild.create_text_channel(
         "質問・問い合わせ",
         category=cat_info,
         overwrites=q_overwrites,
+        slowmode_delay=5,
         topic="応募前・参加前の疑問や問い合わせはこちらへどうぞ。"
     )
 
