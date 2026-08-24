@@ -1,0 +1,42 @@
+[
+  {
+    "id": "run-001",
+    "order": 1,
+    "scheduled_at": "2026-09-05T13:00:00+09:00",
+    "game": {
+      "title": "Super Mario 64",
+      "category": "16 Star",
+      "platform": "N64実機",
+      "aspect_ratio": "4:3",
+      "est": "00:20:00",
+      "setup_minutes": 10
+    },
+    "runner": {
+      "name": "ひなめが",
+      "furigana": "ヒナメガ",
+      "twitch": "hinamega",
+      "twitter": "hinamega_dev",
+      "discord": "hinamega"
+    }
+  },
+  {
+    "id": "run-002",
+    "order": 2,
+    "scheduled_at": "2026-09-05T13:30:00+09:00",
+    "game": {
+      "title": "Celeste",
+      "category": "Any%",
+      "platform": "PC (Steam)",
+      "aspect_ratio": "16:9",
+      "est": "00:45:00",
+      "setup_minutes": 10
+    },
+    "runner": {
+      "name": "てち",
+      "furigana": "テチ",
+      "twitch": "techi_speedrun",
+      "twitter": "techi_gal",
+      "discord": "techi_01"
+    }
+  }
+]

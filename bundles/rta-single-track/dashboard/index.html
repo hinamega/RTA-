@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>単走ワンオペ管理パネル</title>
+  <style>
+    :root {
+      --bg-color: #1e1e24;
+      --panel-bg: #2b2d42;
+      --card-bg: #181926;
+      --accent: #ff007f;
+      --accent-hover: #e00070;
+      --primary: #4cc9f0;
+      --success: #06d6a0;
+      --warning: #ffd166;
+      --danger: #ef476f;
+      --text: #edf2f4;
+      --text-muted: #8d99ae;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: var(--bg-color);
+      color: var(--text);
+      font-family: 'Segoe UI', Meiryo, sans-serif;
+      font-size: 14px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* タイマー表示 */
+    .timer-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid #3d405b;
+    }
+    .timer-display {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 42px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(76, 201, 240, 0.4);
+      margin-bottom: 12px;
+    }
+    .timer-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .status-stopped { background: #4a4e69; color: #fff; }
+    .status-running { background: var(--success); color: #000; }
+    .status-paused { background: var(--warning); color: #000; }
+    .status-finished { background: var(--accent); color: #fff; }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+
+    .btn-start { background: var(--success); color: #000; }
+    .btn-pause { background: var(--warning); color: #000; }
+    .btn-finish { background: var(--accent); color: #fff; }
+    .btn-reset { background: #6c757d; color: #fff; }
+    .btn-nav { background: #3a0ca3; color: #fff; flex: 1; }
+    .btn-jump { background: #4361ee; color: #fff; }
+
+    /* 現在の走者情報 */
+    .current-run-card {
+      background: var(--panel-bg);
+      border-radius: 8px;
+      padding: 14px;
+      border: 1px solid #4a4e69;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .game-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .game-category {
+      font-size: 13px;
+      color: var(--warning);
+      margin-bottom: 8px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      background: var(--card-bg);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .info-item span { color: var(--text-muted); }
+    .info-item b { color: #fff; margin-left: 4px; }
+
+    /* ナビゲーション */
+    .nav-card {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* JSONインポートセクション */
+    details {
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 8px 12px;
+      border: 1px solid #3d405b;
+      font-size: 12px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 11px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      margin-top: 8px;
+      padding: 6px;
+      resize: vertical;
+    }
+    .import-btn {
+      margin-top: 6px;
+      background: var(--primary);
+      color: #000;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- タイマーセクション -->
+    <div class="timer-card">
+      <div id="timerStatus" class="timer-status status-stopped">STOPPED</div>
+      <div id="timerDisplay" class="timer-display">00:00:00</div>
+      <div class="btn-group">
+        <button id="btnStart" class="btn-start" onclick="startTimer()">▶ START</button>
+        <button id="btnPause" class="btn-pause" onclick="pauseTimer()">⏸ PAUSE</button>
+        <button id="btnFinish" class="btn-finish" onclick="finishTimer()">🏁 FINISH</button>
+        <button id="btnReset" class="btn-reset" onclick="resetTimer()">🔄 RESET</button>
+      </div>
+    </div>
+
+    <!-- 現在の出走情報 -->
+    <div class="current-run-card">
+      <div class="card-title">
+        <span>CURRENT RUNNER</span>
+        <span id="runProgress">0 / 0</span>
+      </div>
+      <div id="gameTitle" class="game-title">未選択</div>
+      <div id="gameCategory" class="game-category">-</div>
+      
+      <div class="info-grid">
+        <div class="info-item"><span>走者:</span><b id="runnerName">-</b></div>
+        <div class="info-item"><span>EST:</span><b id="gameEst">-</b></div>
+        <div class="info-item"><span>比率:</span><b id="gameAspect">-</b></div>
+        <div class="info-item"><span>Twitch:</span><b id="runnerTwitch">-</b></div>
+        <div class="info-item"><span>機種:</span><b id="gamePlatform">-</b></div>
+        <div class="info-item"><span>Discord:</span><b id="runnerDiscord">-</b></div>
+      </div>
+    </div>
+
+    <!-- 進行ナビゲーション -->
+    <div class="nav-card">
+      <button class="btn-nav" onclick="prevRun()">◀ 前の走者</button>
+      <button class="btn-nav" style="background: var(--accent);" onclick="nextRun()">次の走者 (NEXT) ▶</button>
+    </div>
+
+    <!-- スケジュールインポート -->
+    <details>
+      <summary>📋 スケジュールJSON インポート</summary>
+      <textarea id="importJsonArea" placeholder='[ { "id": "run-001", ... } ]'></textarea>
+      <button class="import-btn" onclick="importSchedule()">JSONを反映する</button>
+    </details>
+
+  </div>
+
+  <script>
+    const scheduleRep = nodecg.Replicant('schedule');
+    const currentRunIndexRep = nodecg.Replicant('currentRunIndex');
+    const currentRunRep = nodecg.Replicant('currentRun');
+    const timerRep = nodecg.Replicant('timer');
+
+    // タイマー更新
+    timerRep.on('change', (val) => {
+      if (!val) return;
+      document.getElementById('timerDisplay').innerText = val.formatted || '00:00:00';
+      const statusEl = document.getElementById('timerStatus');
+      statusEl.innerText = val.status.toUpperCase();
+      statusEl.className = 'timer-status status-' + val.status;
+    });
+
+    // 走者情報更新
+    currentRunRep.on('change', (run) => {
+      if (!run) {
+        document.getElementById('gameTitle').innerText = '出走者なし';
+        document.getElementById('gameCategory').innerText = '-';
+        document.getElementById('runnerName').innerText = '-';
+        document.getElementById('gameEst').innerText = '-';
+        document.getElementById('gameAspect').innerText = '-';
+        document.getElementById('runnerTwitch').innerText = '-';
+        document.getElementById('gamePlatform').innerText = '-';
+        document.getElementById('runnerDiscord').innerText = '-';
+        return;
+      }
+
+      document.getElementById('gameTitle').innerText = run.game?.title || '-';
+      document.getElementById('gameCategory').innerText = run.game?.category || '-';
+      document.getElementById('runnerName').innerText = run.runner?.name || '-';
+      document.getElementById('gameEst').innerText = run.game?.est || '-';
+      document.getElementById('gameAspect').innerText = run.game?.aspect_ratio || '16:9';
+      document.getElementById('runnerTwitch').innerText = run.runner?.twitch || '-';
+      document.getElementById('gamePlatform').innerText = run.game?.platform || '-';
+      document.getElementById('runnerDiscord').innerText = run.runner?.discord || '-';
+    });
+
+    currentRunIndexRep.on('change', (idx) => {
+      const total = scheduleRep.value ? scheduleRep.value.length : 0;
+      document.getElementById('runProgress').innerText = (idx + 1) + ' / ' + total;
+    });
+
+    // アクション
+    function startTimer() { nodecg.sendMessage('startTimer'); }
+    function pauseTimer() { nodecg.sendMessage('pauseTimer'); }
+    function finishTimer() { nodecg.sendMessage('finishTimer'); }
+    function resetTimer() { nodecg.sendMessage('resetTimer'); }
+
+    function nextRun() { nodecg.sendMessage('nextRun'); }
+    function prevRun() { nodecg.sendMessage('prevRun'); }
+
+    function importSchedule() {
+      const text = document.getElementById('importJsonArea').value.trim();
+      if (!text) {
+        alert('JSONを入力してください');
+        return;
+      }
+      nodecg.sendMessage('importSchedule', text, (err, res) => {
+        if (err) {
+          alert('インポート失敗: ' + err.message);
+        } else {
+          alert('インポート成功！ ' + res.count + '件の走者を読み込みました。');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

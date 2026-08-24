@@ -1,0 +1,13 @@
+{
+  "name": "rta-event-ide",
+  "version": "1.0.0",
+  "description": "オンラインRTAイベント誰でもワンオペ機械化スターターキット",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && npx nodecg defaultconfig",
+    "start": "npx nodecg start"
+  },
+  "dependencies": {
+    "nodecg": "^2.1.9"
+  }
+}

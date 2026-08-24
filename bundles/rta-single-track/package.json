@@ -1,0 +1,26 @@
+{
+  "name": "rta-single-track",
+  "version": "1.0.0",
+  "description": "オンラインRTAイベント単走ワンオペ管理バンドル",
+  "nodecg": {
+    "compatibleRange": "^2.0.0 || ^1.9.0",
+    "dashboardPanels": [
+      {
+        "name": "controller",
+        "title": "🎮 単走ワンオペ管理パネル",
+        "file": "dashboard/index.html",
+        "width": 4
+      }
+    ],
+    "graphics": [
+      {
+        "file": "graphics/index.html",
+        "width": 1920,
+        "height": 1080
+      }
+    ]
+  },
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}

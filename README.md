@@ -120,20 +120,20 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 ## ロードマップ（進行予定）
 
 ### Phase 1：配信システム（NodeCG）のワンクリック基盤構築
-- [ ] 初回セットアップ＆起動用バッチファイルの作成
-- [ ] 基本ダッシュボード（走者情報・タイマー・Twitch連携）の構築
-- [ ] OBS用オーバーレイのベーステンプレート作成
-- [ ] 動作確認・テスト
+- [x] 初回セットアップ＆起動用バッチファイルの作成（`setup.bat`, `start.bat`）
+- [x] 基本ダッシュボード（走者情報・タイマー・JSONインポート）の構築（`bundles/rta-single-track/dashboard`）
+- [x] OBS用オーバーレイのベーステンプレート作成（`bundles/rta-single-track/graphics`）
+- [x] 16:9 / 4:3 自動切り替え＆Twitch自動ミラー機能の実装
 
 ### Phase 2：運用マニュアルの作成
-- [ ] 初心者向けセットアップガイド（Node.js / OBS）
-- [ ] 当日の画面操作・進行手順マニュアル
-- [ ] トラブル対応チェックリスト
+- [x] 初心者向けセットアップ＆当日操作マニュアル（[docs/nodecg_setup_and_operation_guide.md](docs/nodecg_setup_and_operation_guide.md)）
+- [x] タイムテーブル作成＆スケジュールJSON出力ガイド（[docs/timetable_and_schedule_guide.md](docs/timetable_and_schedule_guide.md)）
 
 ### Phase 3：イベント運営テンプレート一式の整備
-- [ ] 募集・選定用テンプレート（応募フォーム・タイムテーブルシート）
+- [x] 走者募集フォーム（[設計ガイド](docs/runner_form_guide.md) / [GAS自動生成スクリプト](tools/create_runner_form.js)）
+- [x] タイムテーブル＆JSON出力スクリプト（[tools/export_schedule_json.js](tools/export_schedule_json.js)）
 - [x] Discord サーバー設定テンプレート（[docs/discord_setup_guide.md](docs/discord_setup_guide.md)）
-- [ ] 進行台本・当日連絡用スプレッドシート
+- [ ] 進行台本・当日連絡用テンプレート
 - [ ] 終了後アンケート・御礼テンプレート
 
 ---

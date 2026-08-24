@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>RTA Single Track Overlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;700;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0f18;
+      --card-bg: rgba(22, 27, 46, 0.85);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --accent: #ff007f;
+      --cyan: #00f0ff;
+      --gold: #ffd60a;
+      --green: #00f5d4;
+      --text: #f8f9fa;
+      --text-dim: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: transparent;
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+      color: var(--text);
+    }
+
+    .overlay-container {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      background: var(--bg);
+    }
+
+    /* ゲーム画面表示枠（16:9 デフォルト） */
+    #gameScreenContainer {
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      width: 1360px;
+      height: 765px;
+      background: #000000;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 4:3 レトロレイアウト時のゲーム画面枠 */
+    .layout-4-3 #gameScreenContainer {
+      width: 1020px;
+      height: 765px;
+    }
+
+    /* Twitch 埋め込みプレイヤー iframe */
+    #twitchEmbed {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* 右側サイドバー */
+    .sidebar {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      bottom: 40px;
+      width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s ease;
+    }
+
+    .layout-4-3 .sidebar {
+      width: 780px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    /* タイマーカード */
+    .timer-card {
+      text-align: center;
+      border-bottom: 3px solid var(--cyan);
+    }
+    .timer-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .timer-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 64px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+    .timer-finished {
+      color: var(--accent) !important;
+      text-shadow: 0 0 20px rgba(255, 0, 127, 0.8) !important;
+    }
+
+    /* 走者カード */
+    .runner-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .badge {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(255, 0, 127, 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .runner-furigana {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: -4px;
+    }
+    .runner-name {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    .social-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .social-item b {
+      color: var(--text);
+    }
+
+    /* 下部：ゲーム情報バー（16:9時） */
+    .bottom-bar {
+      position: absolute;
+      left: 40px;
+      bottom: 40px;
+      width: 1360px;
+      height: 215px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .layout-4-3 .bottom-bar {
+      width: 1020px;
+    }
+
+    .game-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 32px;
+    }
+    .game-title {
+      font-size: 36px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .game-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 18px;
+    }
+    .category-badge {
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .platform-badge {
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+    .est-badge {
+      margin-left: auto;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay" class="overlay-container">
+    
+    <!-- ゲーム映像（Twitchミラー / キャプチャ枠） -->
+    <div id="gameScreenContainer">
+      <iframe 
+        id="twitchEmbed" 
+        src="about:blank" 
+        allowfullscreen="true">
+      </iframe>
+    </div>
+
+    <!-- 下部ゲーム情報バー -->
+    <div class="bottom-bar">
+      <div class="card game-card">
+        <div id="gameTitle" class="game-title">RTA EVENT 2026</div>
+        <div class="game-meta">
+          <span id="gameCategory" class="category-badge">Any%</span>
+          <span id="gamePlatform" class="platform-badge">PC</span>
+          <span class="est-badge">EST: <b id="gameEst" style="color:#fff;">00:00:00</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右側サイドバー -->
+    <div class="sidebar">
+      <!-- タイマー -->
+      <div class="card timer-card">
+        <div class="timer-label">TIMER</div>
+        <div id="timerDisplay" class="timer-val">00:00:00</div>
+      </div>
+
+      <!-- 走者情報 -->
+      <div class="card runner-card">
+        <span class="badge">RUNNER</span>
+        <div id="runnerFurigana" class="runner-furigana">フリガナ</div>
+        <div id="runnerName" class="runner-name">走者名</div>
+        <div class="social-links">
+          <div class="social-item">
+            <span>Twitch:</span>
+            <b id="runnerTwitch">-</b>
+          </div>
+          <div class="social-item" id="twitterRow">
+            <span>X:</span>
+            <b id="runnerTwitter">-</b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const currentRunRep = nodecg.Replicant('currentRun');
+    const timerRep = nodecg.Replicant('timer');
+    let currentTwitchChannel = '';
+
+    // タイマーの更新
+    timerRep.on('change', (val) => {
+      if (!val) return;
+      const el = document.getElementById('timerDisplay');
+      el.innerText = val.formatted || '00:00:00';
+      if (val.status === 'finished') {
+        el.classList.add('timer-finished');
+      } else {
+        el.classList.remove('timer-finished');
+      }
+    });
+
+    // 走者・ゲーム情報の更新
+    currentRunRep.on('change', (run) => {
+      if (!run) return;
+
+      // テキスト反映
+      document.getElementById('gameTitle').innerText = run.game?.title || 'No Title';
+      document.getElementById('gameCategory').innerText = run.game?.category || '-';
+      document.getElementById('gamePlatform').innerText = run.game?.platform || '-';
+      document.getElementById('gameEst').innerText = run.game?.est || '00:00:00';
+
+      document.getElementById('runnerFurigana').innerText = run.runner?.furigana || '';
+      document.getElementById('runnerName').innerText = run.runner?.name || '-';
+      document.getElementById('runnerTwitch').innerText = run.runner?.twitch || '-';
+      
+      const twitter = run.runner?.twitter;
+      if (twitter) {
+        document.getElementById('runnerTwitter').innerText = '@' + twitter;
+        document.getElementById('twitterRow').style.display = 'flex';
+      } else {
+        document.getElementById('twitterRow').style.display = 'none';
+      }
+
+      // アスペクト比に応じたレイアウト切り替え
+      const overlayEl = document.getElementById('overlay');
+      if (run.game?.aspect_ratio === '4:3') {
+        overlayEl.classList.add('layout-4-3');
+      } else {
+        overlayEl.classList.remove('layout-4-3');
+      }
+
+      // Twitchミラーの自動切り替え
+      const twitchId = run.runner?.twitch;
+      if (twitchId && twitchId !== currentTwitchChannel) {
+        currentTwitchChannel = twitchId;
+        // NodeCGが動作するホスト名（localhost等）をparentに指定
+        const parentHost = window.location.hostname || 'localhost';
+        const embedUrl = `https://player.twitch.tv/?channel=${encodeURIComponent(twitchId)}&parent=${parentHost}&muted=false&autoplay=true`;
+        document.getElementById('twitchEmbed').src = embedUrl;
+      }
+    });
+  </script>
+</body>
+</html>
