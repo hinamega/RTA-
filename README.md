@@ -141,3 +141,17 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 ## 改善提案・フィードバックについて
 「もっとこうしたら使いやすい」「この部分の設計やアイデアが欲しい」などのご意見やフィードバックがあれば、Issueからお気軽にいただけると助かります！
 ※ 現在、コードやファイルの直接の Pull Request は受け付けておりません。まずは Issue でのご提案・ディスカッションをお願いいたします。
+
+---
+
+## ライセンス・出典クレジット
+
+本プロジェクトの配信画面および管理UIは、以下のオープンソースデザインシステムおよびフォントをもとに設計・構築されています。
+
+- **デジタル庁デザインシステム (DADS)**
+  - 出典：[デジタル庁デザインシステムウェブサイト](https://design.digital.go.jp/dads/) のコンテンツをもとに作成
+  - ライセンス：CC BY 4.0 / MIT License (Code Snippets)
+- **Noto Sans JP**
+  - Copyright 2022 The Noto Project Authors (SIL Open Font License 1.1)
+- **JetBrains Mono**
+  - Copyright 2020 The JetBrains Mono Project Authors (SIL Open Font License 1.1)
