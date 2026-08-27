@@ -2,106 +2,109 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>RTA Control Panel</title>
+  <title>RTA Control Panel - Geist Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;900&family=Noto+Sans+JP:wght@400;600;700;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700;800&family=Geist:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* shadcn/ui × DADS スタイルトークン */
+    /* ==========================================================================
+       Vercel Geist / shadcn/ui Dark Design Tokens
+       ========================================================================== */
     :root {
-      --bg: #090d16;
-      --card-bg: #111827;
-      --card-inner: #1f2937;
-      --border: rgba(255, 255, 255, 0.1);
-      --border-active: #38bdf8;
+      --geist-bg: #000000;
+      --geist-card: #0a0a0a;
+      --geist-card-subtle: #121212;
+      --geist-border: #262626;
+      --geist-border-focus: #ededed;
       
-      --primary: #38bdf8;
-      --accent: #f43f5e;
-      --success: #10b981;
-      --warning: #f59e0b;
+      --geist-fg: #ededed;
+      --geist-muted: #888888;
+      --geist-dim: #444444;
       
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      --geist-blue: #0070f3;
+      --geist-cyan: #50e3c2;
+      --geist-success: #00df8f;
+      --geist-warning: #f5a623;
+      --geist-danger: #ff0080;
       
-      --radius: 8px;
+      --radius: 6px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       padding: 16px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--geist-bg);
+      color: var(--geist-fg);
+      font-family: 'Geist', 'Noto Sans JP', sans-serif;
       font-size: 13px;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .dashboard-container {
+    .container {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-width: 600px;
+      gap: 14px;
+      max-width: 580px;
       margin: 0 auto;
     }
 
-    .ui-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+    .geist-card {
+      background: var(--geist-card);
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius);
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      color: var(--primary);
+      font-family: 'Geist Mono', monospace;
+      color: var(--geist-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      font-family: 'Outfit', sans-serif;
     }
 
     /* タイマー */
-    .timer-box {
+    .timer-display-box {
       text-align: center;
-      background: #000;
-      border: 1px solid var(--border);
+      background: #000000;
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius);
       padding: 16px;
     }
 
     .timer-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 46px;
-      font-weight: 900;
-      letter-spacing: -1px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      font-feature-settings: "tnum";
       color: #fff;
     }
 
-    .timer-status-badge {
+    .status-tag {
       display: inline-block;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 4px;
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 700;
+      font-family: 'Geist Mono', monospace;
       text-transform: uppercase;
-      font-family: 'Outfit', sans-serif;
       margin-bottom: 6px;
     }
-
-    .status-stopped { background: #374151; color: #9ca3af; }
-    .status-running { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-    .status-paused { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .status-finished { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .status-stopped { background: #171717; color: var(--geist-muted); border: 1px solid var(--geist-border); }
+    .status-running { background: rgba(0, 223, 143, 0.15); color: var(--geist-success); border: 1px solid rgba(0, 223, 143, 0.3); }
+    .status-paused { background: rgba(255, 0, 128, 0.15); color: var(--geist-danger); border: 1px solid rgba(255, 0, 128, 0.3); }
+    .status-finished { background: rgba(245, 166, 35, 0.15); color: var(--geist-warning); border: 1px solid rgba(245, 166, 35, 0.3); }
 
     /* ボタングリッド */
     .btn-grid {
@@ -111,12 +114,14 @@
     }
 
     button {
-      padding: 10px 12px;
+      padding: 9px 12px;
       font-size: 12px;
-      font-weight: 700;
-      font-family: inherit;
+      font-weight: 600;
+      font-family: 'Geist', 'Noto Sans JP', sans-serif;
       border-radius: var(--radius);
-      border: 1px solid transparent;
+      border: 1px solid var(--geist-border);
+      background: var(--geist-card-subtle);
+      color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -125,172 +130,167 @@
       transition: all 0.15s ease;
     }
 
-    button:hover { filter: brightness(1.15); transform: translateY(-1px); }
-    button:active { transform: translateY(0); filter: brightness(0.95); }
+    button:hover {
+      background: #1f1f1f;
+      border-color: var(--geist-border-focus);
+    }
+    button:active { transform: scale(0.98); }
 
-    .btn-start { background: var(--success); color: #000; }
-    .btn-pause { background: var(--warning); color: #000; }
-    .btn-finish { background: var(--accent); color: #fff; }
-    .btn-reset { background: #374151; color: #f3f4f6; border-color: #4b5563; }
+    .btn-primary { background: #ededed; color: #000; font-weight: 700; border-color: #ededed; }
+    .btn-primary:hover { background: #ffffff; }
+
+    .btn-action-start { background: var(--geist-success); color: #000; font-weight: 700; border-color: var(--geist-success); }
+    .btn-action-start:hover { filter: brightness(1.1); }
+
+    .btn-action-finish { background: var(--geist-warning); color: #000; font-weight: 700; border-color: var(--geist-warning); }
+    .btn-action-finish:hover { filter: brightness(1.1); }
 
     /* レイアウト切り替え */
-    .layout-btn-group {
+    .layout-group {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
     }
 
-    .btn-layout {
-      background: var(--card-inner);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
     .btn-layout.active {
-      background: var(--primary);
+      background: var(--geist-fg);
       color: #000;
-      border-color: var(--primary);
+      font-weight: 700;
+      border-color: var(--geist-fg);
     }
 
-    /* 走者・ゲーム情報フォーム */
+    /* フォーム */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .form-group.full {
-      grid-column: 1 / -1;
-    }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full { grid-column: 1 / -1; }
 
     label {
       font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--geist-muted);
       font-weight: 600;
-      color: var(--text-muted);
     }
 
     input, select, textarea {
-      background: var(--card-inner);
-      border: 1px solid var(--border);
+      background: #000000;
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius);
       padding: 8px 10px;
       color: #fff;
       font-size: 13px;
       font-family: inherit;
       outline: none;
+      transition: border-color 0.15s ease;
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--primary);
+      border-color: var(--geist-border-focus);
     }
 
     .nav-btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
+      margin-top: 4px;
     }
-    .btn-prev { background: #1f2937; color: #fff; border: 1px solid var(--border); }
-    .btn-next { background: var(--primary); color: #000; }
 
-    /* アコーディオン */
     details {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      background: var(--geist-card);
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius);
       padding: 10px 14px;
     }
     summary {
       cursor: pointer;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
       font-weight: 700;
-      font-size: 12px;
-      color: var(--text-muted);
+      color: var(--geist-muted);
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
 
-  <div class="dashboard-container">
+  <div class="container">
     
-    <!-- 1. タイマー操作パネル -->
-    <div class="ui-card">
+    <!-- 1. タイマー操作 -->
+    <div class="geist-card">
       <div class="card-header">
-        <span>⏱️ Speedrun Timer</span>
-        <span id="timerStatus" class="timer-status-badge status-stopped">STOPPED</span>
+        <span>TIMER CONTROL</span>
+        <span id="timerStatus" class="status-tag status-stopped">STOPPED</span>
       </div>
       
-      <div class="timer-box">
+      <div class="timer-display-box">
         <div class="timer-text" id="timerDisplay">00:00:00</div>
       </div>
 
       <div class="btn-grid">
-        <button class="btn-start" onclick="nodecg.sendMessage('startTimer')">▶ START</button>
-        <button class="btn-pause" onclick="nodecg.sendMessage('pauseTimer')">⏸ PAUSE</button>
-        <button class="btn-finish" onclick="nodecg.sendMessage('finishTimer')">🏁 FINISH</button>
-        <button class="btn-reset" onclick="nodecg.sendMessage('resetTimer')">🔄 RESET</button>
+        <button class="btn-action-start" onclick="nodecg.sendMessage('startTimer')">▶ START</button>
+        <button onclick="nodecg.sendMessage('pauseTimer')">⏸ PAUSE</button>
+        <button class="btn-action-finish" onclick="nodecg.sendMessage('finishTimer')">🏁 FINISH</button>
+        <button onclick="nodecg.sendMessage('resetTimer')">🔄 RESET</button>
       </div>
     </div>
 
-    <!-- 2. 画面レイアウト切り替え -->
-    <div class="ui-card">
+    <!-- 2. レイアウト切り替え -->
+    <div class="geist-card">
       <div class="card-header">
-        <span>📺 Layout Preset</span>
+        <span>LAYOUT PRESET</span>
         <span id="currentLayoutText" style="color: #fff;">16:9</span>
       </div>
-      <div class="layout-btn-group">
+      <div class="layout-group">
         <button class="btn-layout active" id="btnLayout169" onclick="setLayout('16:9')">16:9 ワイド</button>
         <button class="btn-layout" id="btnLayout43" onclick="setLayout('4:3')">4:3 レトロ</button>
-        <button class="btn-layout" id="btnLayoutRace" onclick="setLayout('race')">2人並走</button>
-        <button class="btn-layout" id="btnLayoutSetup" onclick="setLayout('setup')">待機/予告</button>
+        <button class="btn-layout" id="btnLayoutSetup" onclick="setLayout('setup')">待機 / 予告</button>
       </div>
     </div>
 
-    <!-- 3. 走者・ゲーム情報 -->
-    <div class="ui-card">
+    <!-- 3. 走者＆ゲーム情報 -->
+    <div class="geist-card">
       <div class="card-header">
-        <span>🎮 Run Details</span>
-        <span id="scheduleProgress" style="color: #fff;">1 / 1</span>
+        <span>RUN DETAILS</span>
+        <span id="scheduleProgress" style="color: #fff;">1 / 2</span>
       </div>
 
-      <!-- スケジュール選択ドロップダウン -->
       <div class="form-group full">
-        <label>スケジュールから選択</label>
+        <label>SCHEDULE SELECT</label>
         <select id="scheduleSelect" onchange="onScheduleSelect(this.value)">
-          <option value="0">読み込み中...</option>
+          <option value="0">Loading...</option>
         </select>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>ゲームタイトル</label>
+          <label>GAME TITLE</label>
           <input type="text" id="inpGameTitle" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>カテゴリ</label>
+          <label>CATEGORY</label>
           <input type="text" id="inpGameCategory" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>予定タイム (EST)</label>
+          <label>EST TIME</label>
           <input type="text" id="inpGameEst" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>走者名</label>
+          <label>RUNNER</label>
           <input type="text" id="inpRunnerName" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>解説者名</label>
+          <label>COMMENTATOR</label>
           <input type="text" id="inpCommentatorName" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>機種 (Platform)</label>
+          <label>PLATFORM</label>
           <input type="text" id="inpGamePlatform" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>アスペクト比</label>
+          <label>ASPECT RATIO</label>
           <select id="inpGameAspect" onchange="saveRunChanges()">
             <option value="16:9">16:9</option>
             <option value="4:3">4:3</option>
@@ -298,34 +298,33 @@
         </div>
       </div>
 
-      <!-- 前へ / 次へ -->
-      <div class="nav-btn-row" style="margin-top: 6px;">
-        <button class="btn-prev" onclick="nodecg.sendMessage('prevRun')">◀ 前の走者</button>
-        <button class="btn-next" onclick="nodecg.sendMessage('nextRun')">次の走者 (NEXT) ▶</button>
+      <div class="nav-btn-row">
+        <button onclick="nodecg.sendMessage('prevRun')">◀ PREV RUN</button>
+        <button class="btn-primary" onclick="nodecg.sendMessage('nextRun')">NEXT RUN ▶</button>
       </div>
     </div>
 
-    <!-- 4. イベント情報設定 -->
+    <!-- 4. イベント設定 -->
     <details>
-      <summary>⚙️ イベント設定 (ロゴ・ハッシュタグ)</summary>
+      <summary>⚙️ EVENT METADATA</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
         <div class="form-group">
-          <label>イベント名</label>
+          <label>EVENT NAME</label>
           <input type="text" id="inpEventName" onchange="saveEventInfo()">
         </div>
         <div class="form-group">
-          <label>公式ハッシュタグ</label>
+          <label>HASHTAG</label>
           <input type="text" id="inpEventHashtag" onchange="saveEventInfo()">
         </div>
       </div>
     </details>
 
-    <!-- 5. スケジュールJSONインポート -->
+    <!-- 5. JSONインポート -->
     <details>
-      <summary>📋 スケジュールJSON 一括読み込み</summary>
+      <summary>📋 SCHEDULE JSON IMPORT</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-        <textarea id="importJsonArea" rows="5" placeholder='[ { "game": { "title": "Game Name", "category": "Any%" }, "runner": { "name": "Runner" } } ]'></textarea>
-        <button style="background: var(--primary); color: #000;" onclick="importSchedule()">JSONをスケジュールに適用</button>
+        <textarea id="importJsonArea" rows="4" placeholder='[ { "game": { "title": "Game Name" } } ]'></textarea>
+        <button class="btn-primary" onclick="importSchedule()">IMPORT TO SCHEDULE</button>
       </div>
     </details>
 
@@ -345,7 +344,7 @@
       document.getElementById('timerDisplay').innerText = val.formatted || '00:00:00';
       const statusEl = document.getElementById('timerStatus');
       statusEl.innerText = val.status.toUpperCase();
-      statusEl.className = 'timer-status-badge status-' + val.status;
+      statusEl.className = 'status-tag status-' + val.status;
     });
 
     // 2. レイアウト
@@ -354,7 +353,6 @@
       document.querySelectorAll('.btn-layout').forEach(b => b.classList.remove('active'));
       if (layout === '16:9') document.getElementById('btnLayout169')?.classList.add('active');
       if (layout === '4:3') document.getElementById('btnLayout43')?.classList.add('active');
-      if (layout === 'race') document.getElementById('btnLayoutRace')?.classList.add('active');
       if (layout === 'setup') document.getElementById('btnLayoutSetup')?.classList.add('active');
     });
 
@@ -374,12 +372,12 @@
       document.getElementById('inpGameAspect').value = run.game?.aspect_ratio || '16:9';
     });
 
-    // 4. スケジュールドロップダウン更新
+    // 4. スケジュールドロップダウン
     scheduleRep.on('change', (list) => {
       const select = document.getElementById('scheduleSelect');
       select.innerHTML = '';
       if (!list || list.length === 0) {
-        select.innerHTML = '<option value="0">走者なし</option>';
+        select.innerHTML = '<option value="0">No Runs</option>';
         return;
       }
       list.forEach((item, idx) => {
@@ -447,7 +445,7 @@
       if (!text) { alert('JSONを入力してください'); return; }
       nodecg.sendMessage('importSchedule', text, (err, res) => {
         if (err) alert('エラー: ' + err.message);
-        else alert(`成功！ ${res.count} 件の走者をスケジュールに反映しました。`);
+        else alert(`成功！ ${res.count} 件の走者を反映しました。`);
       });
     }
   </script>

@@ -2,34 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>RTA Universal Broadcast Overlay</title>
-  <!-- Google Fonts: Noto Sans JP, Outfit, JetBrains Mono -->
+  <title>RTA Speedrun Broadcast - Vercel Geist Edition</title>
+  <!-- Google Fonts: Geist, Geist Mono, Noto Sans JP, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800;900&family=Noto+Sans+JP:wght@400;600;700;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700;800;900&family=Geist:wght@400;600;700;800;900&family=Noto+Sans+JP:wght@400;600;700;900&family=JetBrains+Mono:wght@700;800;900&display=swap" rel="stylesheet">
   
   <style>
     /* ==========================================================================
-       厳密なグリッド計算 (1920x1080 / 外周20px / 隙間16px)
+       Vercel Geist Design System - Dark Mode Tokens
        ========================================================================== */
     :root {
-      --bg-base: #080b11;
-      --card-bg: rgba(15, 22, 36, 0.94);
-      --card-bg-light: rgba(24, 34, 54, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.12);
-      --border-strong: rgba(255, 255, 255, 0.2);
+      --geist-background: #000000;
+      --geist-surface: #0a0a0a;
+      --geist-surface-2: #121212;
+      --geist-border: #262626;
+      --geist-border-hover: #404040;
+      --geist-border-active: #ededed;
       
-      --color-primary: #38bdf8;       /* スカイブルー */
-      --color-accent: #f43f5e;        /* ビビッドローズ */
-      --color-timer-running: #10b981; /* エメラルドグリーン */
-      --color-timer-finished: #f59e0b;/* ゴールド */
-      --color-timer-paused: #fbbf24;  /* アンバー */
-      --color-text-main: #f8fafc;
-      --color-text-muted: #94a3b8;
+      --geist-foreground: #ededed;
+      --geist-secondary: #a1a1a1;
+      --geist-muted: #707070;
+      --geist-subtle: #404040;
       
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 12px;
+      /* Vercel Status / Accents */
+      --geist-blue: #0070f3;
+      --geist-cyan: #50e3c2;
+      --geist-success: #00df8f;   /* Running */
+      --geist-warning: #f5a623;   /* Finished / Gold */
+      --geist-danger: #ff0080;    /* Paused / Highlight */
+      
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,48 +44,51 @@
       height: 1080px;
       overflow: hidden;
       background: transparent;
-      font-family: 'Noto Sans JP', sans-serif;
-      color: var(--color-text-main);
+      font-family: 'Geist', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--geist-foreground);
       -webkit-font-smoothing: antialiased;
     }
 
-    /* 全体コンテナ: 1920x1080 に外周20pxパディング ➡️ 有効エリア 1880x1040 */
+    /* 1920x1080 ピクセルパーフェクト グリッド (外周20px / 隙間16px) */
     .overlay-viewport {
       width: 1920px;
       height: 1080px;
       padding: 20px;
-      background: var(--bg-base);
+      background: var(--geist-background);
       display: grid;
       grid-template-columns: 1440px 424px;
       gap: 16px;
       position: relative;
     }
 
-    /* 共通カード */
-    .dads-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-subtle);
+    /* Vercel Geist Card (1px 極細ボーダー & ソリッドブラック) */
+    .geist-card {
+      background: var(--geist-surface);
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius-lg);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       position: relative;
       overflow: hidden;
+      transition: border-color 0.2s ease;
     }
 
-    .dads-badge {
+    /* Vercel Badge (極小・高精細タグ) */
+    .geist-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 2px 8px;
+      gap: 5px;
+      padding: 2px 7px;
       border-radius: var(--radius-sm);
       font-size: 11px;
       font-weight: 700;
+      font-family: 'Geist Mono', monospace;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      font-family: 'Outfit', sans-serif;
     }
-    .badge-primary { background: rgba(56, 189, 248, 0.15); color: var(--color-primary); border: 1px solid rgba(56, 189, 248, 0.3); }
-    .badge-accent { background: rgba(244, 63, 94, 0.15); color: var(--color-accent); border: 1px solid rgba(244, 63, 94, 0.3); }
-    .badge-gold { background: rgba(245, 158, 11, 0.15); color: var(--color-timer-finished); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .badge-default { background: #171717; color: var(--geist-secondary); border: 1px solid var(--geist-border); }
+    .badge-blue { background: rgba(0, 112, 243, 0.12); color: #3291ff; border: 1px solid rgba(0, 112, 243, 0.3); }
+    .badge-cyan { background: rgba(80, 227, 194, 0.12); color: var(--geist-cyan); border: 1px solid rgba(80, 227, 194, 0.3); }
+    .badge-gold { background: rgba(245, 166, 35, 0.12); color: var(--geist-warning); border: 1px solid rgba(245, 166, 35, 0.3); }
 
     /* ===================================================
        左カラム (幅1440px × 高さ1040px)
@@ -92,33 +100,25 @@
       height: 1040px;
     }
 
-    /* ゲーム画面枠 (16:9 最大化: 1440x810) */
+    /* ゲーム画面枠 (1440x810 16:9最大化) */
     #gameScreenWrapper {
       width: 1440px;
       height: 810px;
       background: #000;
-      border: 2px solid var(--border-strong);
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius-lg);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 50px rgba(0, 0, 0, 0.8);
       flex-shrink: 0;
       position: relative;
     }
 
-    /* 並走時用 画面2 */
-    #gameScreenWrapper2 {
-      display: none;
-    }
-
-    /* 4:3 レトロ時のゲーム画面枠 (1080x810) */
-    .layout-4-3 .left-column {
-      grid-template-columns: 1080px;
-    }
+    /* 4:3 レトロ時 */
     .layout-4-3 #gameScreenWrapper {
       width: 1080px;
       height: 810px;
     }
 
-    /* 左下インフォバー (幅1440px × 高さ214px: 下端完全一致！) */
+    /* 左下フッター (1440x214 下端完全一致！) */
     .bottom-bar {
       flex: 1;
       height: 214px;
@@ -126,29 +126,45 @@
       gap: 16px;
     }
 
-    .bottom-info-card {
+    .event-info-card {
       flex: 1;
-      padding: 16px 20px;
+      padding: 20px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
     }
 
-    /* 走者カメラ / 手元枠 (オプションで表示可能) */
-    .camera-slot {
-      width: 285px; /* 16:9比率小窓 */
+    .event-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .event-hashtag {
+      font-size: 13px;
+      color: var(--geist-secondary);
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* 走者カメラ小窓 */
+    .camera-card {
+      width: 285px;
       height: 100%;
-      background: #000;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
+      background: #050505;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: var(--color-text-muted);
+      gap: 6px;
+      color: var(--geist-muted);
       font-size: 11px;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Geist Mono', monospace;
       font-weight: 700;
+      letter-spacing: 1px;
     }
 
     /* ===================================================
@@ -163,79 +179,108 @@
 
     /* 1. タイマーカード */
     .timer-card {
-      padding: 16px 20px;
+      padding: 18px 24px;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
     }
 
     .timer-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 52px;
-      font-weight: 900;
+      font-family: 'Geist Mono', 'JetBrains Mono', monospace;
+      font-size: 54px;
+      font-weight: 800;
+      letter-spacing: -2px;
       font-feature-settings: "tnum";
-      letter-spacing: -1px;
-      color: var(--color-text-main);
+      color: #ffffff;
       margin: 4px 0;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
     }
 
-    .timer-running .timer-value { color: var(--color-timer-running); text-shadow: 0 0 24px rgba(16, 185, 129, 0.4); }
-    .timer-finished .timer-value { color: var(--color-timer-finished); text-shadow: 0 0 24px rgba(245, 158, 11, 0.4); }
-    .timer-paused .timer-value { color: var(--color-timer-paused); }
+    .timer-running .timer-value {
+      color: var(--geist-success);
+      text-shadow: 0 0 30px rgba(0, 223, 143, 0.35);
+    }
+    .timer-finished .timer-value {
+      color: var(--geist-warning);
+      text-shadow: 0 0 30px rgba(245, 166, 35, 0.35);
+    }
+    .timer-paused .timer-value {
+      color: var(--geist-danger);
+    }
 
-    /* 2. ゲーム＆走者情報カード (残りの高さを flex: 1 で完全フィット) */
+    /* 2. ゲーム＆走者詳細カード */
     .info-card {
       flex: 1;
-      padding: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%);
+    }
+
+    .game-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .game-title-text {
       font-size: 22px;
-      font-weight: 900;
-      line-height: 1.3;
+      font-weight: 800;
+      letter-spacing: -0.6px;
       color: #ffffff;
-      margin-top: 4px;
+      line-height: 1.3;
+      margin-top: 6px;
     }
 
     .game-category-text {
       font-size: 14px;
-      font-weight: 700;
-      color: var(--color-primary);
-      margin-top: 2px;
+      font-weight: 600;
+      color: var(--geist-secondary);
     }
 
-    /* 走者・解説プロファイル */
-    .profile-box {
+    /* プロファイル行 (走者 & 解説者) */
+    .profile-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .profile-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      background: var(--card-bg-light);
-      border: 1px solid var(--border-subtle);
+      background: #111111;
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius-md);
       padding: 12px 14px;
     }
 
-    .profile-role {
+    .profile-icon {
+      font-size: 18px;
+    }
+
+    .profile-role-tag {
       font-size: 10px;
       font-weight: 700;
-      color: var(--color-primary);
+      font-family: 'Geist Mono', monospace;
+      color: var(--geist-muted);
       text-transform: uppercase;
-      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.5px;
     }
-    .profile-name {
+
+    .profile-name-text {
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 700;
       color: #fff;
     }
 
-    /* 機種・ESTメタリスト */
-    .meta-box {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border-subtle);
+    /* メタデータリスト (EST, 機種, アスペクト比) */
+    .meta-list {
+      background: #000000;
+      border: 1px solid var(--geist-border);
       border-radius: var(--radius-md);
       padding: 12px 14px;
       display: flex;
@@ -246,10 +291,22 @@
     .meta-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 12px;
     }
-    .meta-label { color: var(--color-text-muted); font-weight: 600; }
-    .meta-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono', 'Noto Sans JP', sans-serif; }
+
+    .meta-label {
+      color: var(--geist-muted);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .meta-value {
+      color: #ffffff;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+    }
 
     /* ===================================================
        セットアップ・待機画面 (layout-setup)
@@ -257,7 +314,7 @@
     .setup-screen {
       position: absolute;
       top: 0; left: 0; width: 1920px; height: 1080px;
-      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
       display: none;
       flex-direction: column;
       justify-content: center;
@@ -267,15 +324,16 @@
     }
     .layout-setup .setup-screen { display: flex; }
 
-    .setup-next-card {
-      width: 960px;
+    .setup-card {
+      width: 900px;
       text-align: center;
       padding: 48px;
       display: flex;
       flex-direction: column;
       gap: 16px;
+      background: #080808;
+      border: 1px solid var(--geist-border);
     }
-
   </style>
 </head>
 <body>
@@ -284,30 +342,33 @@
     
     <!-- 左カラム (幅1440px × 高さ1040px) -->
     <div class="left-column">
-      <!-- ゲーム画面枠 (1440x810) -->
+      
+      <!-- ゲーム画面枠 (1440x810 16:9) -->
       <div id="gameScreenWrapper"></div>
 
-      <!-- 左下インフォバー (1440x214) -->
+      <!-- 左下フッター (1440x214) -->
       <div class="bottom-bar">
         
-        <!-- イベント＆告知カード -->
-        <div class="dads-card bottom-info-card">
-          <div style="display: flex; align-items: center; gap: 16px;">
-            <div style="font-size: 32px;">⚡</div>
-            <div>
-              <div style="font-family: 'Outfit', 'Noto Sans JP', sans-serif; font-size: 20px; font-weight: 900; color: #fff;" id="eventName">RTA Event Speedrun</div>
-              <div style="font-size: 14px; color: var(--color-primary); font-weight: 700; font-family: 'Outfit', sans-serif;" id="eventHashtag">#RTA_Event</div>
-            </div>
-          </div>
+        <!-- イベント情報カード -->
+        <div class="geist-card event-info-card">
           <div>
-            <span class="dads-badge badge-gold">TRACK 01 • LIVE</span>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span class="geist-badge badge-blue">SPEEDRUN EVENT</span>
+              <span class="geist-badge badge-gold">LIVE</span>
+            </div>
+            <div class="event-title" id="eventName">RTA Event Live</div>
+            <div class="event-hashtag" id="eventHashtag">#RTA_Event</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--geist-muted); text-transform: uppercase;">BROADCAST ENGINE</div>
+            <div style="font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 700; color: #fff;">NODECG • GEIST v2</div>
           </div>
         </div>
 
-        <!-- 走者カメラ / 手元枠 (小窓) -->
-        <div class="dads-card camera-slot" id="cameraSlot">
-          <span style="font-size: 20px; margin-bottom: 4px;">📷</span>
-          <span>RUNNER CAM</span>
+        <!-- 走者カメラ / 手元小窓 -->
+        <div class="geist-card camera-card" id="cameraSlot">
+          <div style="font-size: 22px;">📷</div>
+          <div>RUNNER CAM</div>
         </div>
 
       </div>
@@ -316,52 +377,55 @@
     <!-- 右カラム (サイドバー: 幅424px × 高さ1040px) -->
     <div class="sidebar-column">
       
-      <!-- タイマーカード -->
-      <div class="dads-card timer-card" id="timerCard">
+      <!-- 1. タイマーカード -->
+      <div class="geist-card timer-card" id="timerCard">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="dads-badge badge-primary">TIMER</span>
-          <span style="font-size: 12px; color: var(--color-text-muted); font-weight: 600;">
-            EST <b style="color: #fff; font-family: 'JetBrains Mono', monospace;" id="gameEst">00:00:00</b>
+          <span class="geist-badge badge-default">TIMER</span>
+          <span style="font-size: 12px; color: var(--geist-secondary); font-family: 'Geist Mono', monospace;">
+            EST <b style="color: #fff;" id="gameEst">00:00:00</b>
           </span>
         </div>
         <div class="timer-value" id="timerDisplay">00:00:00</div>
       </div>
 
-      <!-- ゲーム＆走者情報カード -->
-      <div class="dads-card info-card">
-        <div>
-          <span class="dads-badge badge-accent">CATEGORY</span>
-          <div class="game-title-text" id="gameTitle">GAME TITLE</div>
-          <div class="game-category-text" id="gameCategory">Any% Normal</div>
+      <!-- 2. ゲーム＆走者情報カード -->
+      <div class="geist-card info-card">
+        
+        <div class="game-header">
+          <span class="geist-badge badge-cyan" style="align-self: flex-start;">CATEGORY</span>
+          <div class="game-title-text" id="gameTitle">Super Mario 64</div>
+          <div class="game-category-text" id="gameCategory">16 Star</div>
         </div>
 
-        <!-- 走者 -->
-        <div class="profile-box">
-          <div style="font-size: 20px;">🎮</div>
-          <div>
-            <div class="profile-role">RUNNER</div>
-            <div class="profile-name" id="runnerName">Runner Name</div>
+        <div class="profile-group">
+          <!-- 走者 -->
+          <div class="profile-item">
+            <div class="profile-icon">🎮</div>
+            <div>
+              <div class="profile-role-tag">RUNNER</div>
+              <div class="profile-name-text" id="runnerName">ひなめが</div>
+            </div>
+          </div>
+
+          <!-- 解説者 -->
+          <div class="profile-item" style="background: #080808;">
+            <div class="profile-icon">🎙️</div>
+            <div>
+              <div class="profile-role-tag">COMMENTATOR</div>
+              <div class="profile-name-text" id="commentatorName">なし</div>
+            </div>
           </div>
         </div>
 
-        <!-- 解説者 -->
-        <div class="profile-box" style="background: rgba(0,0,0,0.2);">
-          <div style="font-size: 20px;">🎙️</div>
-          <div>
-            <div class="profile-role">COMMENTATOR</div>
-            <div class="profile-name" id="commentatorName">なし</div>
-          </div>
-        </div>
-
-        <!-- 機種・メタ情報 -->
-        <div class="meta-box">
+        <!-- メタ情報 -->
+        <div class="meta-list">
           <div class="meta-row">
             <span class="meta-label">PLATFORM</span>
-            <span class="meta-val" id="gamePlatform">PC / Steam</span>
+            <span class="meta-value" id="gamePlatform">N64実機</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label">ASPECT</span>
-            <span class="meta-val" id="gameAspect">16:9</span>
+            <span class="meta-label">ASPECT RATIO</span>
+            <span class="meta-value" id="gameAspect">16:9</span>
           </div>
         </div>
 
@@ -369,21 +433,19 @@
 
     </div>
 
-    <!-- 待機・セットアップ全画面 -->
+    <!-- セットアップ・待機画面 (layout-setup) -->
     <div class="setup-screen" id="setupScreen">
-      <div class="dads-card setup-next-card">
-        <span class="dads-badge badge-accent" style="align-self: center;">UP NEXT • 次のゲーム</span>
+      <div class="geist-card setup-card">
+        <span class="geist-badge badge-blue" style="align-self: center;">UP NEXT • 次のゲーム</span>
         <div class="game-title-text" id="setupGameTitle" style="font-size: 38px;">GAME TITLE</div>
-        <div class="game-category-text" id="setupGameCategory" style="font-size: 20px;">Category Name (EST: 00:00:00)</div>
-        <div class="profile-box" style="align-self: center; min-width: 320px; justify-content: center;">
-          <div style="font-size: 24px;">🏃‍♂️</div>
+        <div class="game-category-text" id="setupGameCategory" style="font-size: 20px;">Category (EST: 00:00:00)</div>
+        
+        <div class="profile-item" style="align-self: center; min-width: 320px; justify-content: center; margin-top: 10px;">
+          <div class="profile-icon">🏃‍♂️</div>
           <div>
-            <div class="profile-role">RUNNER</div>
-            <div class="profile-name" id="setupRunnerName" style="font-size: 20px;">Runner Name</div>
+            <div class="profile-role-tag">RUNNER</div>
+            <div class="profile-name-text" id="setupRunnerName" style="font-size: 18px;">Runner Name</div>
           </div>
-        </div>
-        <div style="margin-top: 16px;">
-          <div style="font-size: 13px; color: var(--color-text-muted); font-weight: 700;">COMING UP SOON</div>
         </div>
       </div>
     </div>
@@ -400,18 +462,18 @@
     const timerDisplay = document.getElementById('timerDisplay');
     const timerCard = document.getElementById('timerCard');
 
-    // 1. タイマー更新
+    // 1. タイマー
     timerRep.on('change', (val) => {
       if (!val) return;
       timerDisplay.innerText = val.formatted || '00:00:00';
       
-      timerCard.className = 'dads-card timer-card';
+      timerCard.className = 'geist-card timer-card';
       if (val.status === 'running') timerCard.classList.add('timer-running');
       if (val.status === 'finished') timerCard.classList.add('timer-finished');
       if (val.status === 'paused') timerCard.classList.add('timer-paused');
     });
 
-    // 2. 走者＆ゲーム情報更新
+    // 2. 走者＆ゲーム情報
     currentRunRep.on('change', (run) => {
       if (!run) return;
       const gameTitle = run.game?.title || '-';
@@ -435,7 +497,7 @@
       document.getElementById('setupRunnerName').innerText = runner;
     });
 
-    // 3. 画面レイアウト
+    // 3. レイアウト
     layoutRep.on('change', (layout) => {
       overlayRoot.className = 'overlay-viewport';
       if (layout === '4:3') overlayRoot.classList.add('layout-4-3');
