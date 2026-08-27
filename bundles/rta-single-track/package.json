@@ -7,14 +7,14 @@
     "dashboardPanels": [
       {
         "name": "controller",
-        "title": "🎮 単走ワンオペ管理パネル",
-        "file": "dashboard/index.html",
-        "width": 4
+        "title": "🎮 RTA Event Control Panel",
+        "file": "index.html",
+        "width": 5
       }
     ],
     "graphics": [
       {
-        "file": "graphics/index.html",
+        "file": "index.html",
         "width": 1920,
         "height": 1080
       }

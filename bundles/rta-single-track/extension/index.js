@@ -21,6 +21,14 @@ module.exports = function (nodecg) {
   const currentRunRep = nodecg.Replicant('currentRun', {
     defaultValue: initialSchedule[0] || null
   });
+  const layoutRep = nodecg.Replicant('layout', { defaultValue: '16:9' }); // '16:9' | '4:3' | 'race' | 'setup' | 'talk'
+  const eventInfoRep = nodecg.Replicant('eventInfo', {
+    defaultValue: {
+      name: 'RTA Event',
+      hashtag: '#RTA_Event',
+      subText: 'Speedrun Event Live'
+    }
+  });
 
   const timerRep = nodecg.Replicant('timer', {
     defaultValue: {
@@ -86,9 +94,9 @@ module.exports = function (nodecg) {
     const list = scheduleRep.value || [];
     if (index >= 0 && index < list.length) {
       currentRunIndexRep.value = index;
-      currentRunRep.value = list[index];
+      currentRunRep.value = JSON.parse(JSON.stringify(list[index]));
       resetTimer();
-      nodecg.log.info(`出走者を更新しました: [${index + 1}/${list.length}] ${list[index].game.title} by ${list[index].runner.name}`);
+      nodecg.log.info(`出走者を更新しました: [${index + 1}/${list.length}] ${list[index].game?.title} by ${list[index].runner?.name}`);
     }
   }
 
@@ -98,7 +106,7 @@ module.exports = function (nodecg) {
       if (currentRunIndexRep.value >= newVal.length) {
         currentRunIndexRep.value = 0;
       }
-      currentRunRep.value = newVal[currentRunIndexRep.value];
+      currentRunRep.value = JSON.parse(JSON.stringify(newVal[currentRunIndexRep.value]));
     } else {
       currentRunRep.value = null;
     }
@@ -141,6 +149,21 @@ module.exports = function (nodecg) {
     } catch (e) {
       if (ack && !ack.handled) ack(e);
     }
+  });
+
+  nodecg.listenFor('setLayout', (layoutName) => {
+    layoutRep.value = layoutName;
+    nodecg.log.info(`画面レイアウトを変更しました: ${layoutName}`);
+  });
+
+  nodecg.listenFor('updateCurrentRunData', (data) => {
+    currentRunRep.value = data;
+    nodecg.log.info('出走者データを手動更新しました。');
+  });
+
+  nodecg.listenFor('updateEventInfo', (info) => {
+    eventInfoRep.value = info;
+    nodecg.log.info('イベント情報を更新しました。');
   });
 
   nodecg.log.info('RTA Single Track Bundle 拡張機能の準備が完了しました。');
