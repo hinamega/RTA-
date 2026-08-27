@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>RTA Speedrun Broadcast - Mega Universal Light Edition</title>
+  <title>RTA Speedrun Broadcast - DADS Official Resources Edition</title>
   <!-- Google Fonts: Noto Sans JP (太字900・特大可読性), Outfit, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,27 +10,34 @@
   
   <style>
     /* ==========================================================================
-       超特大ユニバーサルデザイン (UD) - 町役場・誰でも読めるメガフォント
+       デジタル庁デザインシステム (DADS) 公式リソース完全準拠
+       - 準拠: https://design.digital.go.jp/dads/
+       - Notification Banner / Tag / Definition List / Universal Mega Tokens
        ========================================================================== */
     :root {
-      --dads-bg: #cbd5e1;            /* 落ち着いた背景 */
-      --dads-surface: #ffffff;       /* ピュアホワイト */
-      --dads-surface-subtle: #f1f5f9;
-      --dads-border: #94a3b8;        /* 2pxの太い境界線 */
-      --dads-border-strong: #475569;
+      /* DADS 公式カラー */
+      --dads-color-bg: #cbd5e1;
+      --dads-color-surface: #ffffff;
+      --dads-color-surface-subtle: #f8fafc;
+      --dads-color-border: #94a3b8;
+      --dads-color-border-strong: #475569;
       
-      --dads-blue-primary: #004ea2;  /* デジ庁ブルー */
-      --dads-blue-light: #dbeafe;
-      --dads-text-main: #0f172a;     /* 漆黒 (コントラスト比最大) */
+      --dads-blue-900: #004ea2;     /* デジ庁ブルー */
+      --dads-blue-100: #dbeafe;
+      --dads-blue-50: #eff6ff;
+      
+      --dads-green-800: #047857;    /* 進行中 (Running) */
+      --dads-green-100: #d1fae5;
+      
+      --dads-gold-800: #b45309;     /* 完走 (Finished) */
+      --dads-gold-100: #fef3c7;
+      
+      --dads-red-800: #be123c;      /* 停止・注意 (Alert) */
+      --dads-red-100: #ffe4e6;
+      
+      --dads-text-primary: #0f172a; /* 墨色 (コントラスト比最大) */
       --dads-text-secondary: #334155;
-      --dads-text-muted: #475569;
-      
-      --dads-green: #047857;         /* 進行中 (Running) */
-      --dads-green-bg: #d1fae5;
-      --dads-gold: #b45309;          /* 完走 (Finished) */
-      --dads-gold-bg: #fef3c7;
-      --dads-red: #be123c;           /* 停止 (Paused) */
-      --dads-red-bg: #ffe4e6;
+      --dads-text-muted: #64748b;
       
       --radius-sm: 8px;
       --radius-md: 12px;
@@ -45,7 +52,7 @@
       overflow: hidden;
       background: transparent;
       font-family: 'Noto Sans JP', -apple-system, sans-serif;
-      color: var(--dads-text-main);
+      color: var(--dads-text-primary);
       -webkit-font-smoothing: antialiased;
     }
 
@@ -54,24 +61,24 @@
       width: 1920px;
       height: 1080px;
       padding: 20px;
-      background: var(--dads-bg);
+      background: var(--dads-color-bg);
       display: grid;
       grid-template-columns: 1440px 424px;
       gap: 16px;
       position: relative;
     }
 
-    /* 公共カード (白背景 + 2.5pxクッキリ太枠) */
+    /* DADS 公式カードスタイル */
     .dads-card {
-      background: var(--dads-surface);
-      border: 2.5px solid var(--dads-border);
+      background: var(--dads-color-surface);
+      border: 2.5px solid var(--dads-color-border);
       border-radius: var(--radius-lg);
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
       position: relative;
       overflow: hidden;
     }
 
-    /* 特大タグ・バッジ */
+    /* DADS 公式タグコンポーネント (Tag / Badge) */
     .dads-tag {
       display: inline-flex;
       align-items: center;
@@ -85,10 +92,22 @@
       font-family: 'Noto Sans JP', 'Outfit', sans-serif;
     }
 
-    .tag-blue { background: var(--dads-blue-light); color: var(--dads-blue-primary); border: 2px solid #93c5fd; }
-    .tag-green { background: var(--dads-green-bg); color: var(--dads-green); border: 2px solid #6ee7b7; }
-    .tag-gold { background: var(--dads-gold-bg); color: var(--dads-gold); border: 2px solid #fcd34d; }
-    .tag-red { background: var(--dads-red-bg); color: var(--dads-red); border: 2px solid #fda4af; }
+    .tag-blue { background: var(--dads-blue-100); color: var(--dads-blue-900); border: 2px solid #93c5fd; }
+    .tag-green { background: var(--dads-green-100); color: var(--dads-green-800); border: 2px solid #6ee7b7; }
+    .tag-gold { background: var(--dads-gold-100); color: var(--dads-gold-800); border: 2px solid #fcd34d; }
+    .tag-red { background: var(--dads-red-100); color: var(--dads-red-800); border: 2px solid #fda4af; }
+
+    /* DADS 公式アイコンラッパー */
+    .dads-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+    .dads-icon svg { width: 100%; height: 100%; fill: currentColor; }
 
     /* ===================================================
        左カラム (幅1440px × 高さ1040px)
@@ -126,19 +145,26 @@
       gap: 16px;
     }
 
+    /* イベント情報 ＆ DADS 公式 Notification Banner */
     .event-info-card {
       flex: 1;
-      padding: 24px 30px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 8px solid var(--dads-blue-900);
+    }
+
+    .event-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-left: 8px solid var(--dads-blue-primary);
     }
 
     .event-title {
       font-size: 28px;
       font-weight: 900;
-      color: var(--dads-blue-primary);
+      color: var(--dads-blue-900);
       letter-spacing: -0.4px;
     }
 
@@ -146,8 +172,32 @@
       font-size: 18px;
       color: var(--dads-text-secondary);
       font-weight: 800;
-      margin-top: 4px;
       font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+    }
+
+    /* DADS 公式 Notification Banner コンポーネント */
+    .dads-notification-banner {
+      background: var(--dads-blue-50);
+      border: 2px solid #bfdbfe;
+      border-left: 6px solid var(--dads-blue-900);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dads-notification-banner__icon {
+      color: var(--dads-blue-900);
+      width: 28px;
+      height: 28px;
+    }
+
+    .dads-notification-banner__text {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--dads-text-primary);
+      line-height: 1.4;
     }
 
     /* 走者カメラ / 手元小窓 */
@@ -155,7 +205,7 @@
       width: 300px;
       height: 100%;
       background: #f8fafc;
-      border: 2.5px dashed var(--dads-border);
+      border: 2.5px dashed var(--dads-color-border);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -177,14 +227,14 @@
       height: 1040px;
     }
 
-    /* 1. タイマーカード (特大76px！) */
+    /* 1. タイマーカード (特大70px) */
     .timer-card {
       padding: 16px 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      border-top: 6px solid var(--dads-blue-primary);
+      border-top: 6px solid var(--dads-blue-900);
     }
 
     .timer-value {
@@ -193,17 +243,17 @@
       font-weight: 900;
       letter-spacing: -2px;
       font-feature-settings: "tnum";
-      color: var(--dads-text-main);
+      color: var(--dads-text-primary);
       margin: 2px 0;
       transition: color 0.2s ease;
     }
 
-    .timer-running .timer-value { color: var(--dads-green); }
-    .timer-running { border-top-color: var(--dads-green); }
-    .timer-finished .timer-value { color: var(--dads-gold); }
-    .timer-finished { border-top-color: var(--dads-gold); }
-    .timer-paused .timer-value { color: var(--dads-red); }
-    .timer-paused { border-top-color: var(--dads-red); }
+    .timer-running .timer-value { color: var(--dads-green-800); }
+    .timer-running { border-top-color: var(--dads-green-800); }
+    .timer-finished .timer-value { color: var(--dads-gold-800); }
+    .timer-finished { border-top-color: var(--dads-gold-800); }
+    .timer-paused .timer-value { color: var(--dads-red-800); }
+    .timer-paused { border-top-color: var(--dads-red-800); }
 
     /* 2. ゲーム＆走者情報カード */
     .info-card {
@@ -223,7 +273,7 @@
     .game-title-text {
       font-size: 30px;
       font-weight: 900;
-      color: var(--dads-text-main);
+      color: var(--dads-text-primary);
       line-height: 1.25;
       margin-top: 6px;
       letter-spacing: -0.6px;
@@ -232,7 +282,7 @@
     .game-category-text {
       font-size: 18px;
       font-weight: 800;
-      color: var(--dads-blue-primary);
+      color: var(--dads-blue-900);
     }
 
     /* プロファイル行 (走者 & 解説者) */
@@ -246,14 +296,22 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      background: var(--dads-surface-subtle);
-      border: 2px solid var(--dads-border);
+      background: var(--dads-color-surface-subtle);
+      border: 2px solid var(--dads-color-border);
       border-radius: var(--radius-md);
       padding: 12px 18px;
     }
 
-    .profile-icon {
-      font-size: 28px;
+    .profile-icon-wrap {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--dads-blue-100);
+      color: var(--dads-blue-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     .profile-role-tag {
@@ -266,14 +324,14 @@
     .profile-name-text {
       font-size: 24px;
       font-weight: 900;
-      color: var(--dads-text-main);
+      color: var(--dads-text-primary);
       letter-spacing: -0.3px;
     }
 
-    /* メタデータリスト (EST, 機種, アスペクト比) */
-    .meta-list {
+    /* DADS 公式 Definition List (定義リスト) */
+    .dads-definition-list {
       background: #f8fafc;
-      border: 2px solid var(--dads-border);
+      border: 2px solid var(--dads-color-border);
       border-radius: var(--radius-md);
       padding: 14px 18px;
       display: flex;
@@ -281,20 +339,20 @@
       gap: 8px;
     }
 
-    .meta-row {
+    .dads-dl-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 15px;
     }
 
-    .meta-label {
+    dt.dads-dt {
       color: var(--dads-text-muted);
       font-weight: 800;
     }
 
-    .meta-value {
-      color: var(--dads-text-main);
+    dd.dads-dd {
+      color: var(--dads-text-primary);
       font-family: 'JetBrains Mono', 'Noto Sans JP', sans-serif;
       font-size: 18px;
       font-weight: 900;
@@ -306,7 +364,7 @@
     .setup-screen {
       position: absolute;
       top: 0; left: 0; width: 1920px; height: 1080px;
-      background: #cbd5e1;
+      background: var(--dads-color-bg);
       display: none;
       flex-direction: column;
       justify-content: center;
@@ -317,13 +375,13 @@
     .layout-setup .setup-screen { display: flex; }
 
     .setup-card {
-      width: 1000px;
+      width: 1040px;
       text-align: center;
       padding: 56px;
       display: flex;
       flex-direction: column;
       gap: 20px;
-      border: 4px solid var(--dads-blue-primary);
+      border: 4px solid var(--dads-blue-900);
     }
   </style>
 </head>
@@ -340,24 +398,44 @@
       <!-- 左下フッター (1440x214) -->
       <div class="bottom-bar">
         
-        <!-- イベント情報カード -->
+        <!-- イベント情報 ＆ DADS 公式 Notification Banner -->
         <div class="dads-card event-info-card">
-          <div>
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-              <span class="dads-tag tag-blue">RTA イベント生放送</span>
-              <span class="dads-tag tag-red">● LIVE</span>
+          <div class="event-header-row">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <span class="dads-tag tag-blue">
+                  <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2zm0-10h2v8h-2z"/></svg></span>
+                  RTA 生放送
+                </span>
+                <span class="dads-tag tag-red">
+                  <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#be123c;"></span>
+                  LIVE
+                </span>
+              </div>
+              <div class="event-title" id="eventName">RTA Event Speedrun</div>
             </div>
-            <div class="event-title" id="eventName">RTA Event Speedrun</div>
-            <div class="event-hashtag" id="eventHashtag">#RTA_Event</div>
+            <div style="text-align: right;">
+              <div class="event-hashtag" id="eventHashtag">#RTA_Event</div>
+            </div>
           </div>
-          <div style="text-align: right;">
-            <span class="dads-tag tag-blue" style="font-size: 16px; padding: 6px 16px;">TRACK 01</span>
+
+          <!-- DADS 公式 Notification Banner (お知らせ速報) -->
+          <div class="dads-notification-banner" id="announcementBanner">
+            <div class="dads-notification-banner__icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            </div>
+            <div class="dads-notification-banner__text" id="announcementText">
+              ただいま配信中！公式ハッシュタグで応援ポストをお願いします！
+            </div>
           </div>
+
         </div>
 
-        <!-- 走者カメラ / 手元小窓 -->
+        <!-- 走者カメラ / 手元小窓 (DADS 公式 Camera SVG) -->
         <div class="dads-card camera-card" id="cameraSlot">
-          <div style="font-size: 32px;">📷</div>
+          <div style="width: 44px; height: 44px; color: var(--dads-blue-900);">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+          </div>
           <div>走者カメラ</div>
         </div>
 
@@ -370,9 +448,12 @@
       <!-- 1. タイマーカード (特大70px) -->
       <div class="dads-card timer-card" id="timerCard">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="dads-tag tag-blue" id="timerBadge">タイマー</span>
+          <span class="dads-tag tag-blue" id="timerBadge">
+            <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg></span>
+            タイマー
+          </span>
           <span style="font-size: 15px; color: var(--dads-text-secondary); font-weight: 800;">
-            予定 <b style="color: var(--dads-text-main); font-family: 'JetBrains Mono', monospace; font-size: 18px;" id="gameEst">00:00:00</b>
+            予定 <b style="color: var(--dads-text-primary); font-family: 'JetBrains Mono', monospace; font-size: 18px;" id="gameEst">00:00:00</b>
           </span>
         </div>
         <div class="timer-value" id="timerDisplay">00:00:00</div>
@@ -382,7 +463,10 @@
       <div class="dads-card info-card">
         
         <div class="game-header">
-          <span class="dads-tag tag-blue" style="align-self: flex-start;">作品名</span>
+          <span class="dads-tag tag-blue" style="align-self: flex-start;">
+            <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></span>
+            作品名
+          </span>
           <div class="game-title-text" id="gameTitle">Super Mario 64</div>
           <div class="game-category-text" id="gameCategory">16 Star</div>
         </div>
@@ -390,7 +474,9 @@
         <div class="profile-group">
           <!-- 走者 -->
           <div class="profile-item">
-            <div class="profile-icon">🎮</div>
+            <div class="profile-icon-wrap">
+              <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            </div>
             <div>
               <div class="profile-role-tag">走者 (RUNNER)</div>
               <div class="profile-name-text" id="runnerName">ひなめが</div>
@@ -399,7 +485,9 @@
 
           <!-- 解説者 -->
           <div class="profile-item" style="background: #ffffff;">
-            <div class="profile-icon">🎙️</div>
+            <div class="profile-icon-wrap" style="background: #e2e8f0; color: #475569;">
+              <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg></span>
+            </div>
             <div>
               <div class="profile-role-tag">解説 (COMMENTATOR)</div>
               <div class="profile-name-text" id="commentatorName">なし</div>
@@ -407,17 +495,17 @@
           </div>
         </div>
 
-        <!-- メタ情報 -->
-        <div class="meta-list">
-          <div class="meta-row">
-            <span class="meta-label">プレイ機種</span>
-            <span class="meta-value" id="gamePlatform">N64実機</span>
+        <!-- DADS 公式 Definition List -->
+        <dl class="dads-definition-list">
+          <div class="dads-dl-row">
+            <dt class="dads-dt">プレイ機種</dt>
+            <dd class="dads-dd" id="gamePlatform">N64実機</dd>
           </div>
-          <div class="meta-row">
-            <span class="meta-label">画面比率</span>
-            <span class="meta-value" id="gameAspect">16:9</span>
+          <div class="dads-dl-row">
+            <dt class="dads-dt">画面比率</dt>
+            <dd class="dads-dd" id="gameAspect">16:9</dd>
           </div>
-        </div>
+        </dl>
 
       </div>
 
@@ -426,12 +514,17 @@
     <!-- セットアップ・待機画面 (layout-setup) -->
     <div class="setup-screen" id="setupScreen">
       <div class="dads-card setup-card">
-        <span class="dads-tag tag-blue" style="align-self: center; font-size: 18px; padding: 6px 20px;">UP NEXT • 次のゲーム</span>
-        <div class="game-title-text" id="setupGameTitle" style="font-size: 46px; color: var(--dads-blue-primary);">GAME TITLE</div>
+        <span class="dads-tag tag-blue" style="align-self: center; font-size: 18px; padding: 6px 20px;">
+          <span class="dads-icon"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></span>
+          UP NEXT • 次のゲーム
+        </span>
+        <div class="game-title-text" id="setupGameTitle" style="font-size: 46px; color: var(--dads-blue-900);">GAME TITLE</div>
         <div class="game-category-text" id="setupGameCategory" style="font-size: 26px; color: var(--dads-text-secondary);">Category (EST: 00:00:00)</div>
         
         <div class="profile-item" style="align-self: center; min-width: 420px; justify-content: center; margin-top: 16px; padding: 16px 24px;">
-          <div class="profile-icon" style="font-size: 36px;">🏃‍♂️</div>
+          <div class="profile-icon-wrap" style="width: 48px; height: 48px;">
+            <span class="dads-icon" style="width: 30px; height: 30px;"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+          </div>
           <div>
             <div class="profile-role-tag" style="font-size: 15px;">走者</div>
             <div class="profile-name-text" id="setupRunnerName" style="font-size: 28px;">Runner Name</div>
@@ -447,6 +540,7 @@
     const currentRunRep = nodecg.Replicant('currentRun');
     const layoutRep = nodecg.Replicant('layout');
     const eventInfoRep = nodecg.Replicant('eventInfo');
+    const announcementRep = nodecg.Replicant('announcement');
 
     const overlayRoot = document.getElementById('overlayRoot');
     const timerDisplay = document.getElementById('timerDisplay');
@@ -499,6 +593,15 @@
       if (!info) return;
       if (info.name) document.getElementById('eventName').innerText = info.name;
       if (info.hashtag) document.getElementById('eventHashtag').innerText = info.hashtag;
+    });
+
+    // 5. DADS 公式お知らせバナー同期
+    announcementRep.on('change', (ann) => {
+      if (!ann) return;
+      const bannerEl = document.getElementById('announcementBanner');
+      const textEl = document.getElementById('announcementText');
+      if (textEl) textEl.innerText = ann.text || '';
+      if (bannerEl) bannerEl.style.display = ann.visible ? 'flex' : 'none';
     });
   </script>
 </body>

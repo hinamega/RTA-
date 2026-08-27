@@ -2,29 +2,29 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>RTA Control Panel - Public Light Edition</title>
+  <title>RTA Control Panel - DADS Official Resources Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Noto+Sans+JP:wght@400;600;700;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
   
   <style>
     /* ==========================================================================
-       DADS / SmartHR 公共ライトテーマ トークン
+       DADS 公式 UI コンポーネント トークン (Dashboard)
        ========================================================================== */
     :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --border: #cbd5e1;
-      --border-focus: #004ea2;
+      --dads-bg: #f1f5f9;
+      --dads-card: #ffffff;
+      --dads-border: #cbd5e1;
+      --dads-border-focus: #004ea2;
       
-      --primary: #004ea2;     /* デジ庁ブルー */
-      --primary-hover: #003875;
-      --text-main: #0f172a;
-      --text-muted: #475569;
+      --dads-blue-900: #004ea2;     /* デジ庁ブルー */
+      --dads-blue-hover: #003875;
+      --dads-text-main: #0f172a;
+      --dads-text-muted: #475569;
       
-      --success: #059669;
-      --warning: #d97706;
-      --danger: #e11d48;
+      --dads-green-800: #047857;
+      --dads-gold-800: #b45309;
+      --dads-red-800: #be123c;
       
       --radius: 8px;
     }
@@ -33,8 +33,8 @@
 
     body {
       padding: 16px;
-      background: var(--bg);
-      color: var(--text-main);
+      background: var(--dads-bg);
+      color: var(--dads-text-main);
       font-family: 'Noto Sans JP', sans-serif;
       font-size: 13px;
       line-height: 1.5;
@@ -49,8 +49,8 @@
     }
 
     .ui-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
+      background: var(--dads-card);
+      border: 1.5px solid var(--dads-border);
       border-radius: var(--radius);
       padding: 16px;
       display: flex;
@@ -65,7 +65,7 @@
       align-items: center;
       font-size: 12px;
       font-weight: 800;
-      color: var(--primary);
+      color: var(--dads-blue-900);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -74,7 +74,7 @@
     .timer-display-box {
       text-align: center;
       background: #f8fafc;
-      border: 2px solid var(--border);
+      border: 2px solid var(--dads-border);
       border-radius: var(--radius);
       padding: 16px;
     }
@@ -85,7 +85,7 @@
       font-weight: 900;
       letter-spacing: -1px;
       font-feature-settings: "tnum";
-      color: var(--text-main);
+      color: var(--dads-text-main);
     }
 
     .status-tag {
@@ -98,9 +98,9 @@
       margin-bottom: 6px;
     }
     .status-stopped { background: #e2e8f0; color: #475569; }
-    .status-running { background: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
-    .status-paused { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
-    .status-finished { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+    .status-running { background: #d1fae5; color: var(--dads-green-800); border: 1px solid #a7f3d0; }
+    .status-paused { background: #ffe4e6; color: var(--dads-red-800); border: 1px solid #fecdd3; }
+    .status-finished { background: #fef3c7; color: var(--dads-gold-800); border: 1px solid #fde68a; }
 
     /* ボタングリッド */
     .btn-grid {
@@ -115,9 +115,9 @@
       font-weight: 800;
       font-family: inherit;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--dads-border);
       background: #ffffff;
-      color: var(--text-main);
+      color: var(--dads-text-main);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -126,17 +126,17 @@
       transition: all 0.15s ease;
     }
 
-    button:hover { background: #f8fafc; border-color: var(--primary); }
+    button:hover { background: #f8fafc; border-color: var(--dads-blue-900); }
     button:active { transform: scale(0.98); }
 
-    .btn-start { background: var(--success); color: #ffffff; border-color: var(--success); }
-    .btn-start:hover { background: #047857; }
+    .btn-start { background: var(--dads-green-800); color: #ffffff; border-color: var(--dads-green-800); }
+    .btn-start:hover { background: #03543f; }
 
-    .btn-finish { background: var(--warning); color: #ffffff; border-color: var(--warning); }
-    .btn-finish:hover { background: #b45309; }
+    .btn-finish { background: var(--dads-gold-800); color: #ffffff; border-color: var(--dads-gold-800); }
+    .btn-finish:hover { background: #8e3e07; }
 
-    .btn-primary { background: var(--primary); color: #ffffff; border-color: var(--primary); }
-    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary { background: var(--dads-blue-900); color: #ffffff; border-color: var(--dads-blue-900); }
+    .btn-primary:hover { background: var(--dads-blue-hover); }
 
     /* レイアウト切り替え */
     .layout-group {
@@ -146,10 +146,10 @@
     }
 
     .btn-layout.active {
-      background: var(--primary);
+      background: var(--dads-blue-900);
       color: #ffffff;
       font-weight: 800;
-      border-color: var(--primary);
+      border-color: var(--dads-blue-900);
     }
 
     /* フォーム */
@@ -164,22 +164,22 @@
     label {
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-muted);
+      color: var(--dads-text-muted);
     }
 
     input, select, textarea {
       background: #ffffff;
-      border: 1.5px solid var(--border);
+      border: 1.5px solid var(--dads-border);
       border-radius: var(--radius);
       padding: 8px 10px;
-      color: var(--text-main);
+      color: var(--dads-text-main);
       font-size: 13px;
       font-family: inherit;
       outline: none;
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--border-focus);
+      border-color: var(--dads-border-focus);
     }
 
     .nav-btn-row {
@@ -190,8 +190,8 @@
     }
 
     details {
-      background: var(--card);
-      border: 1.5px solid var(--border);
+      background: var(--dads-card);
+      border: 1.5px solid var(--dads-border);
       border-radius: var(--radius);
       padding: 10px 14px;
     }
@@ -199,7 +199,7 @@
       cursor: pointer;
       font-weight: 800;
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--dads-text-muted);
       text-transform: uppercase;
     }
   </style>
@@ -231,7 +231,7 @@
     <div class="ui-card">
       <div class="card-header">
         <span>📺 画面レイアウト切り替え</span>
-        <span id="currentLayoutText" style="color: var(--primary);">16:9</span>
+        <span id="currentLayoutText" style="color: var(--dads-blue-900);">16:9</span>
       </div>
       <div class="layout-group">
         <button class="btn-layout active" id="btnLayout169" onclick="setLayout('16:9')">16:9 ワイド</button>
@@ -240,11 +240,26 @@
       </div>
     </div>
 
-    <!-- 3. 走者＆ゲーム情報 -->
+    <!-- 3. DADS 公式 お知らせバナー発信 -->
+    <div class="ui-card">
+      <div class="card-header">
+        <span>📢 DADS 公式お知らせバナー (速報テロップ)</span>
+      </div>
+      <div class="form-group">
+        <label>画面に流すアナウンス文</label>
+        <input type="text" id="inpAnnouncementText" onchange="saveAnnouncement()">
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" style="flex: 1;" onclick="saveAnnouncement()">バナーを更新・反映</button>
+        <button onclick="toggleAnnouncementVisibility()" id="btnToggleBanner">バナー非表示</button>
+      </div>
+    </div>
+
+    <!-- 4. 走者＆ゲーム情報 -->
     <div class="ui-card">
       <div class="card-header">
         <span>🎮 走者・作品情報</span>
-        <span id="scheduleProgress" style="color: var(--primary);">1 / 2</span>
+        <span id="scheduleProgress" style="color: var(--dads-blue-900);">1 / 2</span>
       </div>
 
       <div class="form-group full">
@@ -294,7 +309,7 @@
       </div>
     </div>
 
-    <!-- 4. イベント設定 -->
+    <!-- 5. イベント設定 -->
     <details>
       <summary>⚙️ イベント情報 (タイトル・ハッシュタグ)</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
@@ -309,7 +324,7 @@
       </div>
     </details>
 
-    <!-- 5. JSONインポート -->
+    <!-- 6. JSONインポート -->
     <details>
       <summary>📋 スケジュールJSON一括読み込み</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
@@ -327,6 +342,7 @@
     const timerRep = nodecg.Replicant('timer');
     const layoutRep = nodecg.Replicant('layout');
     const eventInfoRep = nodecg.Replicant('eventInfo');
+    const announcementRep = nodecg.Replicant('announcement');
 
     // 1. タイマー
     timerRep.on('change', (val) => {
@@ -350,7 +366,31 @@
       nodecg.sendMessage('setLayout', layout);
     }
 
-    // 3. 走者＆ゲーム情報
+    // 3. お知らせバナー
+    announcementRep.on('change', (ann) => {
+      if (!ann) return;
+      document.getElementById('inpAnnouncementText').value = ann.text || '';
+      const btn = document.getElementById('btnToggleBanner');
+      btn.innerText = ann.visible ? 'バナー非表示' : 'バナー表示';
+    });
+
+    function saveAnnouncement() {
+      const cur = announcementRep.value || { text: '', visible: true, type: 'info' };
+      nodecg.sendMessage('updateAnnouncement', {
+        ...cur,
+        text: document.getElementById('inpAnnouncementText').value
+      });
+    }
+
+    function toggleAnnouncementVisibility() {
+      const cur = announcementRep.value || { text: '', visible: true, type: 'info' };
+      nodecg.sendMessage('updateAnnouncement', {
+        ...cur,
+        visible: !cur.visible
+      });
+    }
+
+    // 4. 走者＆ゲーム情報
     currentRunRep.on('change', (run) => {
       if (!run) return;
       document.getElementById('inpGameTitle').value = run.game?.title || '';
@@ -362,7 +402,7 @@
       document.getElementById('inpGameAspect').value = run.game?.aspect_ratio || '16:9';
     });
 
-    // 4. スケジュールドロップダウン
+    // 5. スケジュールドロップダウン
     scheduleRep.on('change', (list) => {
       const select = document.getElementById('scheduleSelect');
       select.innerHTML = '';
@@ -415,7 +455,7 @@
       nodecg.sendMessage('updateCurrentRunData', updated);
     }
 
-    // 5. イベント情報
+    // 6. イベント情報
     eventInfoRep.on('change', (info) => {
       if (!info) return;
       document.getElementById('inpEventName').value = info.name || '';
@@ -429,7 +469,7 @@
       });
     }
 
-    // 6. JSONインポート
+    // 7. JSONインポート
     function importSchedule() {
       const text = document.getElementById('importJsonArea').value.trim();
       if (!text) { alert('JSONを入力してください'); return; }
