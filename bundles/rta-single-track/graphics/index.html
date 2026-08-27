@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>RTA Universal Broadcast Overlay</title>
-  <!-- Google Fonts: Noto Sans JP (可読性最高峰), Outfit, JetBrains Mono (等幅タイマー) -->
+  <!-- Google Fonts: Noto Sans JP, Outfit, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800;900&family=Noto+Sans+JP:wght@400;600;700;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   
   <style>
-    /* デジタル庁デザインシステム (DADS) × Vercel Geist デザイントークン */
+    /* ==========================================================================
+       厳密なグリッド計算 (1920x1080 / 外周20px / 隙間16px)
+       ========================================================================== */
     :root {
       --bg-base: #080b11;
-      --card-bg: rgba(15, 22, 36, 0.92);
+      --card-bg: rgba(15, 22, 36, 0.94);
       --card-bg-light: rgba(24, 34, 54, 0.85);
       --border-subtle: rgba(255, 255, 255, 0.12);
-      --border-focus: rgba(76, 201, 240, 0.6);
+      --border-strong: rgba(255, 255, 255, 0.2);
       
-      /* セマンティックカラー */
       --color-primary: #38bdf8;       /* スカイブルー */
       --color-accent: #f43f5e;        /* ビビッドローズ */
       --color-timer-running: #10b981; /* エメラルドグリーン */
@@ -25,17 +26,10 @@
       --color-timer-paused: #fbbf24;  /* アンバー */
       --color-text-main: #f8fafc;
       --color-text-muted: #94a3b8;
-      --color-text-subtle: #64748b;
       
-      /* 8pxグリッド余白 */
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 16px;
-      --space-4: 24px;
-      --space-5: 32px;
       --radius-sm: 6px;
       --radius-md: 10px;
-      --radius-lg: 16px;
+      --radius-lg: 12px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,40 +44,33 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* 全体コンテナ: 1920x1080 に外周20pxパディング ➡️ 有効エリア 1880x1040 */
     .overlay-viewport {
       width: 1920px;
       height: 1080px;
-      position: relative;
+      padding: 20px;
       background: var(--bg-base);
+      display: grid;
+      grid-template-columns: 1440px 424px;
+      gap: 16px;
+      position: relative;
     }
 
-    /* 共通カードコンポーネント */
+    /* 共通カード */
     .dads-card {
       background: var(--card-bg);
-      backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       position: relative;
       overflow: hidden;
     }
 
-    .dads-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    }
-
-    /* セクションバッジ */
     .dads-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 3px 8px;
+      padding: 2px 8px;
       border-radius: var(--radius-sm);
       font-size: 11px;
       font-weight: 700;
@@ -91,236 +78,181 @@
       text-transform: uppercase;
       font-family: 'Outfit', sans-serif;
     }
-
     .badge-primary { background: rgba(56, 189, 248, 0.15); color: var(--color-primary); border: 1px solid rgba(56, 189, 248, 0.3); }
     .badge-accent { background: rgba(244, 63, 94, 0.15); color: var(--color-accent); border: 1px solid rgba(244, 63, 94, 0.3); }
     .badge-gold { background: rgba(245, 158, 11, 0.15); color: var(--color-timer-finished); border: 1px solid rgba(245, 158, 11, 0.3); }
 
     /* ===================================================
-       1. ゲーム画面フレーム (16:9 / 4:3 / 並走)
+       左カラム (幅1440px × 高さ1040px)
        =================================================== */
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 1040px;
+    }
+
+    /* ゲーム画面枠 (16:9 最大化: 1440x810) */
     #gameScreenWrapper {
-      position: absolute;
-      top: var(--space-4);
-      left: var(--space-4);
-      width: 1360px;
-      height: 765px;
+      width: 1440px;
+      height: 810px;
       background: #000;
-      border: 2px solid var(--border-subtle);
+      border: 2px solid var(--border-strong);
       border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+      flex-shrink: 0;
+      position: relative;
     }
 
-    /* 4:3比率 */
-    .layout-4-3 #gameScreenWrapper {
-      width: 1020px;
-      height: 765px;
-    }
-
-    /* レース並走（2画面）時の2つ目 */
+    /* 並走時用 画面2 */
     #gameScreenWrapper2 {
-      position: absolute;
-      top: var(--space-4);
-      left: 970px;
-      width: 910px;
-      height: 512px;
-      background: #000;
-      border: 2px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
       display: none;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-      transition: all 0.5s ease;
     }
 
-    .layout-race #gameScreenWrapper {
-      width: 910px;
-      height: 512px;
+    /* 4:3 レトロ時のゲーム画面枠 (1080x810) */
+    .layout-4-3 .left-column {
+      grid-template-columns: 1080px;
     }
-    .layout-race #gameScreenWrapper2 {
-      display: block;
+    .layout-4-3 #gameScreenWrapper {
+      width: 1080px;
+      height: 810px;
+    }
+
+    /* 左下インフォバー (幅1440px × 高さ214px: 下端完全一致！) */
+    .bottom-bar {
+      flex: 1;
+      height: 214px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .bottom-info-card {
+      flex: 1;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 走者カメラ / 手元枠 (オプションで表示可能) */
+    .camera-slot {
+      width: 285px; /* 16:9比率小窓 */
+      height: 100%;
+      background: #000;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      font-size: 11px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
     }
 
     /* ===================================================
-       2. 右側サイドバー (16:9 / 4:3時)
+       右カラム (サイドバー: 幅424px × 高さ1040px 下端完全一致！)
        =================================================== */
-    .sidebar-area {
-      position: absolute;
-      top: var(--space-4);
-      right: var(--space-4);
-      width: 472px;
-      height: 984px;
+    .sidebar-column {
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
-      transition: all 0.5s ease;
+      gap: 16px;
+      height: 1040px;
     }
 
-    .layout-4-3 .sidebar-area {
-      width: 812px;
-    }
-
-    /* タイマーカード */
-    .timer-panel {
+    /* 1. タイマーカード */
+    .timer-card {
+      padding: 16px 20px;
       text-align: center;
-      padding: var(--space-4) var(--space-4) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .timer-value {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 58px;
+      font-size: 52px;
       font-weight: 900;
       font-feature-settings: "tnum";
       letter-spacing: -1px;
       color: var(--color-text-main);
-      text-shadow: 0 0 24px rgba(56, 189, 248, 0.3);
       margin: 4px 0;
-      transition: color 0.3s ease;
     }
 
-    .timer-running .timer-value { color: var(--color-timer-running); text-shadow: 0 0 28px rgba(16, 185, 129, 0.4); }
-    .timer-finished .timer-value { color: var(--color-timer-finished); text-shadow: 0 0 28px rgba(245, 158, 11, 0.4); }
+    .timer-running .timer-value { color: var(--color-timer-running); text-shadow: 0 0 24px rgba(16, 185, 129, 0.4); }
+    .timer-finished .timer-value { color: var(--color-timer-finished); text-shadow: 0 0 24px rgba(245, 158, 11, 0.4); }
     .timer-paused .timer-value { color: var(--color-timer-paused); }
 
-    .est-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--color-text-muted);
-      font-weight: 600;
-    }
-    .est-value {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--color-text-main);
-      font-weight: 700;
-    }
-
-    /* ゲーム＆走者情報カード */
-    .info-panel {
+    /* 2. ゲーム＆走者情報カード (残りの高さを flex: 1 で完全フィット) */
+    .info-card {
       flex: 1;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: var(--space-3);
       justify-content: space-between;
     }
 
     .game-title-text {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
       line-height: 1.3;
       color: #ffffff;
-      letter-spacing: -0.5px;
-    }
-
-    .game-category-text {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--color-primary);
       margin-top: 4px;
     }
 
-    .meta-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: var(--space-3);
+    .game-category-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-top: 2px;
     }
 
-    .meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-    }
-    .meta-label { color: var(--color-text-muted); font-weight: 600; }
-    .meta-val { color: var(--color-text-main); font-weight: 700; font-size: 14px; }
-
-    /* 走者・解説者カード */
-    .runner-profile {
+    /* 走者・解説プロファイル */
+    .profile-box {
       display: flex;
       align-items: center;
       gap: 12px;
       background: var(--card-bg-light);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 12px 16px;
+      padding: 12px 14px;
     }
-    .profile-icon {
-      font-size: 24px;
-    }
-    .profile-detail {
-      display: flex;
-      flex-direction: column;
-    }
+
     .profile-role {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--color-primary);
       text-transform: uppercase;
       font-family: 'Outfit', sans-serif;
     }
     .profile-name {
-      font-size: 16px;
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 800;
       color: #fff;
     }
 
-    /* ===================================================
-       3. 下部フッター＆ステータスティッカー (1920x200)
-       =================================================== */
-    .footer-bar {
-      position: absolute;
-      bottom: var(--space-4);
-      left: var(--space-4);
-      width: 1360px;
-      height: 200px;
+    /* 機種・ESTメタリスト */
+    .meta-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
       display: flex;
-      gap: var(--space-3);
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .layout-4-3 .footer-bar {
-      width: 1020px;
-    }
-
-    .event-branding-panel {
-      flex: 1;
+    .meta-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 0 var(--space-4);
+      font-size: 12px;
     }
-
-    .event-title-area {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .event-logo-icon {
-      font-size: 32px;
-    }
-    .event-name {
-      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      color: #fff;
-    }
-    .event-hashtag {
-      font-size: 14px;
-      color: var(--color-primary);
-      font-weight: 700;
-      font-family: 'Outfit', sans-serif;
-    }
+    .meta-label { color: var(--color-text-muted); font-weight: 600; }
+    .meta-val { color: #fff; font-weight: 700; font-family: 'JetBrains Mono', 'Noto Sans JP', sans-serif; }
 
     /* ===================================================
-       4. セットアップ・待機画面 (layout-setup)
+       セットアップ・待機画面 (layout-setup)
        =================================================== */
     .setup-screen {
       position: absolute;
@@ -331,18 +263,17 @@
       justify-content: center;
       align-items: center;
       z-index: 100;
-      padding: var(--space-5);
+      padding: 32px;
     }
-
-    .layout-setup .setup-screen {
-      display: flex;
-    }
+    .layout-setup .setup-screen { display: flex; }
 
     .setup-next-card {
       width: 960px;
       text-align: center;
       padding: 48px;
-      gap: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
   </style>
@@ -351,60 +282,85 @@
 
   <div class="overlay-viewport" id="overlayRoot">
     
-    <!-- ゲーム画面枠 1 -->
-    <div id="gameScreenWrapper">
-      <!-- OBS側でここにゲーム映像ソースをぴったり重ねる -->
+    <!-- 左カラム (幅1440px × 高さ1040px) -->
+    <div class="left-column">
+      <!-- ゲーム画面枠 (1440x810) -->
+      <div id="gameScreenWrapper"></div>
+
+      <!-- 左下インフォバー (1440x214) -->
+      <div class="bottom-bar">
+        
+        <!-- イベント＆告知カード -->
+        <div class="dads-card bottom-info-card">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="font-size: 32px;">⚡</div>
+            <div>
+              <div style="font-family: 'Outfit', 'Noto Sans JP', sans-serif; font-size: 20px; font-weight: 900; color: #fff;" id="eventName">RTA Event Speedrun</div>
+              <div style="font-size: 14px; color: var(--color-primary); font-weight: 700; font-family: 'Outfit', sans-serif;" id="eventHashtag">#RTA_Event</div>
+            </div>
+          </div>
+          <div>
+            <span class="dads-badge badge-gold">TRACK 01 • LIVE</span>
+          </div>
+        </div>
+
+        <!-- 走者カメラ / 手元枠 (小窓) -->
+        <div class="dads-card camera-slot" id="cameraSlot">
+          <span style="font-size: 20px; margin-bottom: 4px;">📷</span>
+          <span>RUNNER CAM</span>
+        </div>
+
+      </div>
     </div>
 
-    <!-- ゲーム画面枠 2 (並走用) -->
-    <div id="gameScreenWrapper2"></div>
-
-    <!-- 右サイドバー -->
-    <div class="sidebar-area">
+    <!-- 右カラム (サイドバー: 幅424px × 高さ1040px) -->
+    <div class="sidebar-column">
       
-      <!-- タイマーパネル -->
-      <div class="dads-card timer-panel" id="timerCard">
+      <!-- タイマーカード -->
+      <div class="dads-card timer-card" id="timerCard">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="dads-badge badge-primary" id="timerBadge">TIMER</span>
-          <span class="est-row">EST <span class="est-value" id="gameEst">00:00:00</span></span>
+          <span class="dads-badge badge-primary">TIMER</span>
+          <span style="font-size: 12px; color: var(--color-text-muted); font-weight: 600;">
+            EST <b style="color: #fff; font-family: 'JetBrains Mono', monospace;" id="gameEst">00:00:00</b>
+          </span>
         </div>
         <div class="timer-value" id="timerDisplay">00:00:00</div>
       </div>
 
-      <!-- ゲーム＆走者情報パネル -->
-      <div class="dads-card info-panel">
+      <!-- ゲーム＆走者情報カード -->
+      <div class="dads-card info-card">
         <div>
-          <span class="dads-badge badge-accent" id="categoryBadge">CATEGORY</span>
+          <span class="dads-badge badge-accent">CATEGORY</span>
           <div class="game-title-text" id="gameTitle">GAME TITLE</div>
           <div class="game-category-text" id="gameCategory">Any% Normal</div>
         </div>
 
-        <!-- 走者情報 -->
-        <div class="runner-profile">
-          <div class="profile-icon">🎮</div>
-          <div class="profile-detail">
-            <span class="profile-role">RUNNER</span>
-            <span class="profile-name" id="runnerName">Runner Name</span>
+        <!-- 走者 -->
+        <div class="profile-box">
+          <div style="font-size: 20px;">🎮</div>
+          <div>
+            <div class="profile-role">RUNNER</div>
+            <div class="profile-name" id="runnerName">Runner Name</div>
           </div>
         </div>
 
-        <!-- 解説者情報 -->
-        <div class="runner-profile" id="commentatorProfile" style="background: rgba(0,0,0,0.2);">
-          <div class="profile-icon">🎙️</div>
-          <div class="profile-detail">
-            <span class="profile-role">COMMENTATOR</span>
-            <span class="profile-name" id="commentatorName">なし</span>
+        <!-- 解説者 -->
+        <div class="profile-box" style="background: rgba(0,0,0,0.2);">
+          <div style="font-size: 20px;">🎙️</div>
+          <div>
+            <div class="profile-role">COMMENTATOR</div>
+            <div class="profile-name" id="commentatorName">なし</div>
           </div>
         </div>
 
         <!-- 機種・メタ情報 -->
-        <div class="meta-list">
+        <div class="meta-box">
           <div class="meta-row">
             <span class="meta-label">PLATFORM</span>
             <span class="meta-val" id="gamePlatform">PC / Steam</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label">ASPECT RATIO</span>
+            <span class="meta-label">ASPECT</span>
             <span class="meta-val" id="gameAspect">16:9</span>
           </div>
         </div>
@@ -413,33 +369,17 @@
 
     </div>
 
-    <!-- 下部フッターバー -->
-    <div class="footer-bar">
-      <div class="dads-card event-branding-panel">
-        <div class="event-title-area">
-          <div class="event-logo-icon">⚡</div>
-          <div>
-            <div class="event-name" id="eventName">RTA Event Speedrun</div>
-            <div class="event-hashtag" id="eventHashtag">#RTA_Event</div>
-          </div>
-        </div>
-        <div>
-          <span class="dads-badge badge-gold" id="trackBadge">TRACK 01 • LIVE</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 待機・セットアップ全画面 (layout-setup時) -->
+    <!-- 待機・セットアップ全画面 -->
     <div class="setup-screen" id="setupScreen">
       <div class="dads-card setup-next-card">
         <span class="dads-badge badge-accent" style="align-self: center;">UP NEXT • 次のゲーム</span>
         <div class="game-title-text" id="setupGameTitle" style="font-size: 38px;">GAME TITLE</div>
         <div class="game-category-text" id="setupGameCategory" style="font-size: 20px;">Category Name (EST: 00:00:00)</div>
-        <div class="runner-profile" style="align-self: center; min-width: 320px; justify-content: center;">
-          <div class="profile-icon">🏃‍♂️</div>
-          <div class="profile-detail">
-            <span class="profile-role">RUNNER</span>
-            <span class="profile-name" id="setupRunnerName" style="font-size: 20px;">Runner Name</span>
+        <div class="profile-box" style="align-self: center; min-width: 320px; justify-content: center;">
+          <div style="font-size: 24px;">🏃‍♂️</div>
+          <div>
+            <div class="profile-role">RUNNER</div>
+            <div class="profile-name" id="setupRunnerName" style="font-size: 20px;">Runner Name</div>
           </div>
         </div>
         <div style="margin-top: 16px;">
@@ -451,7 +391,6 @@
   </div>
 
   <script>
-    // NodeCG Replicants
     const timerRep = nodecg.Replicant('timer');
     const currentRunRep = nodecg.Replicant('currentRun');
     const layoutRep = nodecg.Replicant('layout');
@@ -466,7 +405,7 @@
       if (!val) return;
       timerDisplay.innerText = val.formatted || '00:00:00';
       
-      timerCard.className = 'dads-card timer-panel';
+      timerCard.className = 'dads-card timer-card';
       if (val.status === 'running') timerCard.classList.add('timer-running');
       if (val.status === 'finished') timerCard.classList.add('timer-finished');
       if (val.status === 'paused') timerCard.classList.add('timer-paused');
@@ -491,19 +430,16 @@
       document.getElementById('gameAspect').innerText = aspect;
       document.getElementById('commentatorName').innerText = commentator;
 
-      // セットアップ画面側
       document.getElementById('setupGameTitle').innerText = gameTitle;
       document.getElementById('setupGameCategory').innerText = `${category} (EST: ${est})`;
       document.getElementById('setupRunnerName').innerText = runner;
     });
 
-    // 3. 画面レイアウト切り替え (16:9, 4:3, race, setup, talk)
+    // 3. 画面レイアウト
     layoutRep.on('change', (layout) => {
       overlayRoot.className = 'overlay-viewport';
       if (layout === '4:3') overlayRoot.classList.add('layout-4-3');
-      if (layout === 'race') overlayRoot.classList.add('layout-race');
       if (layout === 'setup') overlayRoot.classList.add('layout-setup');
-      if (layout === 'talk') overlayRoot.classList.add('layout-talk');
     });
 
     // 4. イベント情報
