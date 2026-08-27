@@ -2,45 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>RTA Control Panel - Geist Edition</title>
+  <title>RTA Control Panel - Public Light Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700;800&family=Geist:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Noto+Sans+JP:wght@400;600;700;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
   
   <style>
     /* ==========================================================================
-       Vercel Geist / shadcn/ui Dark Design Tokens
+       DADS / SmartHR 公共ライトテーマ トークン
        ========================================================================== */
     :root {
-      --geist-bg: #000000;
-      --geist-card: #0a0a0a;
-      --geist-card-subtle: #121212;
-      --geist-border: #262626;
-      --geist-border-focus: #ededed;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --border-focus: #004ea2;
       
-      --geist-fg: #ededed;
-      --geist-muted: #888888;
-      --geist-dim: #444444;
+      --primary: #004ea2;     /* デジ庁ブルー */
+      --primary-hover: #003875;
+      --text-main: #0f172a;
+      --text-muted: #475569;
       
-      --geist-blue: #0070f3;
-      --geist-cyan: #50e3c2;
-      --geist-success: #00df8f;
-      --geist-warning: #f5a623;
-      --geist-danger: #ff0080;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #e11d48;
       
-      --radius: 6px;
+      --radius: 8px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       padding: 16px;
-      background: var(--geist-bg);
-      color: var(--geist-fg);
-      font-family: 'Geist', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: 'Noto Sans JP', sans-serif;
       font-size: 13px;
       line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
     }
 
     .container {
@@ -51,24 +48,24 @@
       margin: 0 auto;
     }
 
-    .geist-card {
-      background: var(--geist-card);
-      border: 1px solid var(--geist-border);
+    .ui-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: 'Geist Mono', monospace;
-      color: var(--geist-muted);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -76,35 +73,34 @@
     /* タイマー */
     .timer-display-box {
       text-align: center;
-      background: #000000;
-      border: 1px solid var(--geist-border);
+      background: #f8fafc;
+      border: 2px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
     }
 
     .timer-text {
-      font-family: 'Geist Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 44px;
-      font-weight: 800;
-      letter-spacing: -2px;
+      font-weight: 900;
+      letter-spacing: -1px;
       font-feature-settings: "tnum";
-      color: #fff;
+      color: var(--text-main);
     }
 
     .status-tag {
       display: inline-block;
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       margin-bottom: 6px;
     }
-    .status-stopped { background: #171717; color: var(--geist-muted); border: 1px solid var(--geist-border); }
-    .status-running { background: rgba(0, 223, 143, 0.15); color: var(--geist-success); border: 1px solid rgba(0, 223, 143, 0.3); }
-    .status-paused { background: rgba(255, 0, 128, 0.15); color: var(--geist-danger); border: 1px solid rgba(255, 0, 128, 0.3); }
-    .status-finished { background: rgba(245, 166, 35, 0.15); color: var(--geist-warning); border: 1px solid rgba(245, 166, 35, 0.3); }
+    .status-stopped { background: #e2e8f0; color: #475569; }
+    .status-running { background: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
+    .status-paused { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
+    .status-finished { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
 
     /* ボタングリッド */
     .btn-grid {
@@ -114,14 +110,14 @@
     }
 
     button {
-      padding: 9px 12px;
+      padding: 10px 12px;
       font-size: 12px;
-      font-weight: 600;
-      font-family: 'Geist', 'Noto Sans JP', sans-serif;
+      font-weight: 800;
+      font-family: inherit;
       border-radius: var(--radius);
-      border: 1px solid var(--geist-border);
-      background: var(--geist-card-subtle);
-      color: #fff;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-main);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -130,20 +126,17 @@
       transition: all 0.15s ease;
     }
 
-    button:hover {
-      background: #1f1f1f;
-      border-color: var(--geist-border-focus);
-    }
+    button:hover { background: #f8fafc; border-color: var(--primary); }
     button:active { transform: scale(0.98); }
 
-    .btn-primary { background: #ededed; color: #000; font-weight: 700; border-color: #ededed; }
-    .btn-primary:hover { background: #ffffff; }
+    .btn-start { background: var(--success); color: #ffffff; border-color: var(--success); }
+    .btn-start:hover { background: #047857; }
 
-    .btn-action-start { background: var(--geist-success); color: #000; font-weight: 700; border-color: var(--geist-success); }
-    .btn-action-start:hover { filter: brightness(1.1); }
+    .btn-finish { background: var(--warning); color: #ffffff; border-color: var(--warning); }
+    .btn-finish:hover { background: #b45309; }
 
-    .btn-action-finish { background: var(--geist-warning); color: #000; font-weight: 700; border-color: var(--geist-warning); }
-    .btn-action-finish:hover { filter: brightness(1.1); }
+    .btn-primary { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
 
     /* レイアウト切り替え */
     .layout-group {
@@ -153,10 +146,10 @@
     }
 
     .btn-layout.active {
-      background: var(--geist-fg);
-      color: #000;
-      font-weight: 700;
-      border-color: var(--geist-fg);
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 800;
+      border-color: var(--primary);
     }
 
     /* フォーム */
@@ -170,25 +163,23 @@
 
     label {
       font-size: 11px;
-      font-family: 'Geist Mono', monospace;
-      color: var(--geist-muted);
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--text-muted);
     }
 
     input, select, textarea {
-      background: #000000;
-      border: 1px solid var(--geist-border);
+      background: #ffffff;
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       padding: 8px 10px;
-      color: #fff;
+      color: var(--text-main);
       font-size: 13px;
       font-family: inherit;
       outline: none;
-      transition: border-color 0.15s ease;
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--geist-border-focus);
+      border-color: var(--border-focus);
     }
 
     .nav-btn-row {
@@ -199,17 +190,16 @@
     }
 
     details {
-      background: var(--geist-card);
-      border: 1px solid var(--geist-border);
+      background: var(--card);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius);
       padding: 10px 14px;
     }
     summary {
       cursor: pointer;
-      font-family: 'Geist Mono', monospace;
+      font-weight: 800;
       font-size: 11px;
-      font-weight: 700;
-      color: var(--geist-muted);
+      color: var(--text-muted);
       text-transform: uppercase;
     }
   </style>
@@ -219,9 +209,9 @@
   <div class="container">
     
     <!-- 1. タイマー操作 -->
-    <div class="geist-card">
+    <div class="ui-card">
       <div class="card-header">
-        <span>TIMER CONTROL</span>
+        <span>⏱️ タイマー操作</span>
         <span id="timerStatus" class="status-tag status-stopped">STOPPED</span>
       </div>
       
@@ -230,18 +220,18 @@
       </div>
 
       <div class="btn-grid">
-        <button class="btn-action-start" onclick="nodecg.sendMessage('startTimer')">▶ START</button>
-        <button onclick="nodecg.sendMessage('pauseTimer')">⏸ PAUSE</button>
-        <button class="btn-action-finish" onclick="nodecg.sendMessage('finishTimer')">🏁 FINISH</button>
-        <button onclick="nodecg.sendMessage('resetTimer')">🔄 RESET</button>
+        <button class="btn-start" onclick="nodecg.sendMessage('startTimer')">▶ 開始 (START)</button>
+        <button onclick="nodecg.sendMessage('pauseTimer')">⏸ 一時停止</button>
+        <button class="btn-finish" onclick="nodecg.sendMessage('finishTimer')">🏁 完走 (FINISH)</button>
+        <button onclick="nodecg.sendMessage('resetTimer')">🔄 リセット</button>
       </div>
     </div>
 
-    <!-- 2. レイアウト切り替え -->
-    <div class="geist-card">
+    <!-- 2. 画面レイアウト -->
+    <div class="ui-card">
       <div class="card-header">
-        <span>LAYOUT PRESET</span>
-        <span id="currentLayoutText" style="color: #fff;">16:9</span>
+        <span>📺 画面レイアウト切り替え</span>
+        <span id="currentLayoutText" style="color: var(--primary);">16:9</span>
       </div>
       <div class="layout-group">
         <button class="btn-layout active" id="btnLayout169" onclick="setLayout('16:9')">16:9 ワイド</button>
@@ -251,46 +241,46 @@
     </div>
 
     <!-- 3. 走者＆ゲーム情報 -->
-    <div class="geist-card">
+    <div class="ui-card">
       <div class="card-header">
-        <span>RUN DETAILS</span>
-        <span id="scheduleProgress" style="color: #fff;">1 / 2</span>
+        <span>🎮 走者・作品情報</span>
+        <span id="scheduleProgress" style="color: var(--primary);">1 / 2</span>
       </div>
 
       <div class="form-group full">
-        <label>SCHEDULE SELECT</label>
+        <label>スケジュールから選択</label>
         <select id="scheduleSelect" onchange="onScheduleSelect(this.value)">
-          <option value="0">Loading...</option>
+          <option value="0">読み込み中...</option>
         </select>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>GAME TITLE</label>
+          <label>作品名 (ゲームタイトル)</label>
           <input type="text" id="inpGameTitle" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>CATEGORY</label>
+          <label>カテゴリ</label>
           <input type="text" id="inpGameCategory" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>EST TIME</label>
+          <label>予定タイム (EST)</label>
           <input type="text" id="inpGameEst" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>RUNNER</label>
+          <label>走者名</label>
           <input type="text" id="inpRunnerName" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>COMMENTATOR</label>
+          <label>解説者名</label>
           <input type="text" id="inpCommentatorName" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>PLATFORM</label>
+          <label>プレイ機種</label>
           <input type="text" id="inpGamePlatform" onchange="saveRunChanges()">
         </div>
         <div class="form-group">
-          <label>ASPECT RATIO</label>
+          <label>画面比率</label>
           <select id="inpGameAspect" onchange="saveRunChanges()">
             <option value="16:9">16:9</option>
             <option value="4:3">4:3</option>
@@ -299,21 +289,21 @@
       </div>
 
       <div class="nav-btn-row">
-        <button onclick="nodecg.sendMessage('prevRun')">◀ PREV RUN</button>
-        <button class="btn-primary" onclick="nodecg.sendMessage('nextRun')">NEXT RUN ▶</button>
+        <button onclick="nodecg.sendMessage('prevRun')">◀ 前の走者</button>
+        <button class="btn-primary" onclick="nodecg.sendMessage('nextRun')">次の走者 (NEXT) ▶</button>
       </div>
     </div>
 
     <!-- 4. イベント設定 -->
     <details>
-      <summary>⚙️ EVENT METADATA</summary>
+      <summary>⚙️ イベント情報 (タイトル・ハッシュタグ)</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
         <div class="form-group">
-          <label>EVENT NAME</label>
+          <label>イベント名</label>
           <input type="text" id="inpEventName" onchange="saveEventInfo()">
         </div>
         <div class="form-group">
-          <label>HASHTAG</label>
+          <label>公式ハッシュタグ</label>
           <input type="text" id="inpEventHashtag" onchange="saveEventInfo()">
         </div>
       </div>
@@ -321,10 +311,10 @@
 
     <!-- 5. JSONインポート -->
     <details>
-      <summary>📋 SCHEDULE JSON IMPORT</summary>
+      <summary>📋 スケジュールJSON一括読み込み</summary>
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
         <textarea id="importJsonArea" rows="4" placeholder='[ { "game": { "title": "Game Name" } } ]'></textarea>
-        <button class="btn-primary" onclick="importSchedule()">IMPORT TO SCHEDULE</button>
+        <button class="btn-primary" onclick="importSchedule()">スケジュールに反映</button>
       </div>
     </details>
 
@@ -377,7 +367,7 @@
       const select = document.getElementById('scheduleSelect');
       select.innerHTML = '';
       if (!list || list.length === 0) {
-        select.innerHTML = '<option value="0">No Runs</option>';
+        select.innerHTML = '<option value="0">出走者なし</option>';
         return;
       }
       list.forEach((item, idx) => {
