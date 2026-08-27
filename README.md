@@ -58,45 +58,48 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 - 当落・出演確定の連絡メッセージ用テンプレート
 
 ### 3. 事前準備・リハーサルフェーズ
-- 事故を防ぐ Discord サーバー構築テンプレート（[詳細ガイドはこちら](docs/discord_setup_guide.md)）
-- 走者向け事前接続テスト・リハーサル手順書
-- 配信素材（ロゴ・背景・走者アイコン等）の受け取り・配置ガイド
+- 走者向け接続テスト・配信設定チェックリスト
+- Discord サーバーのチャンネル構成・権限設定テンプレート
 
-### 4. 本番・配信管理フェーズ
-- NodeCG＆OBS のダブルクリック起動パッケージ
-- ワンクリックで完結する画面切替・走者情報更新・Twitchタイトル変更
-- トラブル対応チェックリスト（回線落ち、音声バランス、映像乱れ等）
+### 4. 本番・配信管理フェーズ（NodeCGスターターキット）
+- **「単走トラック（1画面）」** 特化の直感的な配信ダッシュボード
+- OBS連携オーバーレイ（16:9 / 4:3 対応、走者・解説名、タイマー表示）
+- スケジュール JSON のインポート＆1クリック切り替え機能
+- Twitch API 連携による「配信タイトル / カテゴリ」の自動更新
 
-### 5. 〆・振り返りフェーズ
-- イベント終了後の御礼告知文テンプレート
-- 走者・視聴者向け振り返りアンケート（Google フォーム設計案）
-- アーカイブ（VOD）整理・切り抜き公開フロー
+### 5. 振り返り・アフターフォローフェーズ
+- 参加者・視聴者向けアンケートフォーム
+- 配信アーカイブ（VOD）のタイムスタンプ付き目次生成
+- 走者・スタッフへの御礼連絡テンプレート
 
 ---
 
-## データ連携の基本設計（ドラフト）
+## 採用技術スタック
 
-手戻りと属人化をなくすため、応募フォームで集めたデータをそのままNodeCGの制御用JSONへ変換できるデータ構造を定義しています。
+- **配信管理エンジン**: [NodeCG](https://nodecg.dev/) (v2.x)
+- **フロントエンド / UI**: HTML5 / CSS3 (Digital Agency Design System, Vanilla JS)
+- **配信ソフト連携**: OBS Studio (Browser Source)
+- **自動化・データ連携**: Google Apps Script (GAS), Twitch Helix API
+- **動作環境**: Windows 10 / 11 (Node.js v18+)
 
-### 応募フォームで収集する主な項目（要件案）
-- **走者情報**: 走者名、フリガナ、Discord ID（必須）、Twitch ID（必須）、X(Twitter) ID
-- **ゲーム情報**: タイトル、カテゴリ、機種/プラットフォーム、アスペクト比（16:9 / 4:3）、EST（予定タイム）、自己ベスト、参考動画URL
-- **環境・解説**: 解説の有無/同行者情報、希望・参加可能時間帯、通信環境（有線/無線など）
+---
 
-### スケジュールJSON構造（単走向けドラフト）
+## スケジュールデータ形式（JSON仕様案）
+
+本キットで扱うスケジュールデータの標準フォーマットです。Google スプレッドシートからこの形式で出力してインポートします。
+
 ```json
 [
   {
-    "id": "run-001",
+    "id": "run-01",
     "order": 1,
-    "scheduled_at": "2026-09-01T13:00:00+09:00",
+    "scheduled_time": "2026-06-20T10:00:00+09:00",
     "game": {
-      "title": "Super Mario 64",
-      "category": "16 Star",
-      "platform": "N64",
-      "aspect_ratio": "4:3",
-      "est": "00:20:00",
-      "setup_minutes": 10
+      "title": "ゲームタイトル",
+      "category": "Any%",
+      "platform": "PC / Switch / etc",
+      "aspect_ratio": "16:9",
+      "est": "00:45:00"
     },
     "runner": {
       "name": "走者名",
@@ -123,14 +126,14 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 - [x] 初回セットアップ＆起動用バッチファイルの作成（`setup.bat`, `start.bat`）
 - [x] 基本ダッシュボード（走者情報・タイマー・JSONインポート）の構築（`bundles/rta-single-track/dashboard`）
 - [x] OBS用オーバーレイのベーステンプレート作成（`bundles/rta-single-track/graphics`）
-- [x] 16:9 / 4:3 自動切り替え＆Twitch自動ミラー機能の実装
+- [x] 16:9 / 4:3 切り替え＆Twitchミラー機能の実装
 
 ### Phase 2：運用マニュアルの作成
 - [x] 初心者向けセットアップ＆当日操作マニュアル（[docs/nodecg_setup_and_operation_guide.md](docs/nodecg_setup_and_operation_guide.md)）
 - [x] タイムテーブル作成＆スケジュールJSON出力ガイド（[docs/timetable_and_schedule_guide.md](docs/timetable_and_schedule_guide.md)）
 
 ### Phase 3：イベント運営テンプレート一式の整備
-- [x] 走者募集フォーム（[設計ガイド](docs/runner_form_guide.md) / [GAS自動生成スクリプト](tools/create_runner_form.js)）
+- [x] 走者募集フォーム（[設計ガイド](docs/runner_form_guide.md) / [GASスクリプト](tools/create_runner_form.js)）
 - [x] タイムテーブル＆JSON出力スクリプト（[tools/export_schedule_json.js](tools/export_schedule_json.js)）
 - [x] Discord サーバー設定テンプレート（[docs/discord_setup_guide.md](docs/discord_setup_guide.md)）
 - [ ] 進行台本・当日連絡用テンプレート
@@ -149,7 +152,7 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 本プロジェクトの配信画面および管理UIは、以下のオープンソースデザインシステムおよびフォントをもとに設計・構築されています。
 
 - **デジタル庁デザインシステム (DADS)**
-  - 出典：[デジタル庁デザインシステムウェブサイト](https://design.digital.go.jp/dads/) のコンテンツをもとに作成
+  - 出典：デジタル庁デザインシステムウェブサイト https://design.digital.go.jp/dads/ のコンテンツを加工して作成
   - ライセンス：CC BY 4.0 / MIT License (Code Snippets)
 - **Noto Sans JP**
   - Copyright 2022 The Noto Project Authors (SIL Open Font License 1.1)
