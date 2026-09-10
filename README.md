@@ -66,10 +66,12 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 - OBS連携オーバーレイ（16:9 / 4:3 対応、走者・解説名、タイマー表示）
 - スケジュール JSON のインポート＆1クリック切り替え機能
 - Twitch API 連携による「配信タイトル / カテゴリ」の自動更新
+- **LiveSplit 自動連携**：走者のタイマーを TCP 経由で取得し、配信タイマーへ完全同期（[ガイド](docs/livesplit_integration_guide.md)）
+- **事故検知アラート**：LiveSplit 切断・予定タイム超過・出走リマインドを Discord に通知（[ガイド](docs/vod_chapter_and_alert_guide.md)）
 
 ### 5. 振り返り・アフターフォローフェーズ
 - 参加者・視聴者向けアンケートフォーム
-- 配信アーカイブ（VOD）のタイムスタンプ付き目次生成
+- **配信アーカイブ（VOD）のチャプター自動生成**：実走開始時刻から Twitch / YouTube 用チャプターを出力（[ガイド](docs/vod_chapter_and_alert_guide.md)）
 - 走者・スタッフへの御礼連絡テンプレート
 
 ---
@@ -79,7 +81,8 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 - **配信管理エンジン**: [NodeCG](https://nodecg.dev/) (v2.x)
 - **フロントエンド / UI**: HTML5 / CSS3 (Digital Agency Design System, Vanilla JS)
 - **配信ソフト連携**: OBS Studio (Browser Source)
-- **自動化・データ連携**: Google Apps Script (GAS), Twitch Helix API
+- **自動化・データ連携**: Google Apps Script (GAS), Twitch Helix API, Discord Webhook
+- **タイマー連携**: LiveSplit Server (TCP / Node.js 標準 `net` モジュール、追加ライブラリ不要)
 - **動作環境**: Windows 10 / 11 (Node.js v18+)
 
 ---
@@ -138,6 +141,12 @@ Geminiと壁打ちしながら作っていくけど、人間が関与すべき�
 - [x] Discord サーバー設定テンプレート（[docs/discord_setup_guide.md](docs/discord_setup_guide.md)）
 - [ ] 進行台本・当日連絡用テンプレート
 - [ ] 終了後アンケート・御礼テンプレート
+
+### Phase 4：ワンオペ運用の自動化・事故防止
+- [x] LiveSplit 自動連携（TCP・走者タイマーと配信タイマーの完全同期）（[ガイド](docs/livesplit_integration_guide.md)）
+- [x] 実走開始・終了時刻の自動記録（VODチャプターの基礎データ）
+- [x] VODチャプター自動生成（Twitch / YouTube 用テキスト出力）（[ガイド](docs/vod_chapter_and_alert_guide.md)）
+- [x] 事故検知アラート（Discord Webhook 通知：LiveSplit切断 / 予定超過 / 出走リマインド / SOS）
 
 ---
 

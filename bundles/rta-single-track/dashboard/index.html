@@ -219,11 +219,15 @@
         <div class="timer-text" id="timerDisplay">00:00:00</div>
       </div>
 
-      <div class="btn-grid">
+      <div class="btn-grid" id="timerControlButtons">
         <button class="btn-start" onclick="nodecg.sendMessage('startTimer')">▶ 開始 (START)</button>
         <button onclick="nodecg.sendMessage('pauseTimer')">⏸ 一時停止</button>
         <button class="btn-finish" onclick="nodecg.sendMessage('finishTimer')">🏁 完走 (FINISH)</button>
         <button onclick="nodecg.sendMessage('resetTimer')">🔄 リセット</button>
+      </div>
+
+      <div id="timerSourceHint" style="display: none; font-size: 11px; font-weight: 700; color: var(--dads-green-800); text-align: center;">
+        ✅ LiveSplit と同期中（手動操作は無効）
       </div>
     </div>
 
@@ -333,6 +337,95 @@
       </div>
     </details>
 
+    <!-- 7. LiveSplit 自動連携 -->
+    <div class="ui-card">
+      <div class="card-header">
+        <span>⏱️ LiveSplit 自動連携</span>
+        <span id="lsStatus" class="status-tag status-stopped">未接続</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>ホスト</label>
+          <input type="text" id="lsHost" onchange="saveLiveSplitConfig()">
+        </div>
+        <div class="form-group">
+          <label>ポート</label>
+          <input type="number" id="lsPort" onchange="saveLiveSplitConfig()">
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" style="flex: 1;" onclick="lsConnect()">🔌 接続</button>
+        <button style="flex: 1;" onclick="lsDisconnect()">切断</button>
+      </div>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="lsUseAsTimer" onchange="saveLiveSplitConfig()"> タイマー表示を LiveSplit に同期
+      </label>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="lsAutoConnect" onchange="saveLiveSplitConfig()"> 起動時に自動接続
+      </label>
+      <div id="lsSplitInfo" style="font-size: 11px; color: var(--dads-text-muted); line-height: 1.5;">
+        未接続です。LiveSplit の「右クリック → Control → Start TCP Server」を起動してから接続してね。
+      </div>
+    </div>
+
+    <!-- 8. VODチャプター自動生成 -->
+    <div class="ui-card">
+      <div class="card-header">
+        <span>🎬 VODチャプター自動生成</span>
+        <span id="vodCount" style="color: var(--dads-blue-900);">0 件</span>
+      </div>
+      <div class="form-group">
+        <label>配信開始時刻（任意 / 例: 2026-09-05T13:00:00+09:00）</label>
+        <input type="text" id="vodStart" placeholder="未入力なら最初の走者を 0:00 にします">
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" style="flex: 1;" onclick="generateVodChapters()">📝 チャプター生成</button>
+        <button style="flex: 1;" onclick="clearActualTimes()">実走記録をクリア</button>
+      </div>
+      <textarea id="vodOutput" rows="6" readonly placeholder="ここに Twitch / YouTube 用チャプターが出力されます"></textarea>
+      <button onclick="copyVodChapters()">📋 クリップボードにコピー</button>
+    </div>
+
+    <!-- 9. 事故検知アラート -->
+    <div class="ui-card">
+      <div class="card-header">
+        <span>🚨 事故検知アラート</span>
+        <span id="alertStatus" class="status-tag status-stopped">OFF</span>
+      </div>
+      <div class="form-group">
+        <label>Discord Webhook URL</label>
+        <input type="password" id="alertWebhook" placeholder="https://discord.com/api/webhooks/..." onchange="saveAlertsConfig()">
+      </div>
+      <div class="form-group">
+        <label>メンション（任意 / 例: @here や &lt;@&amp;ロールID&gt;）</label>
+        <input type="text" id="alertMention" onchange="saveAlertsConfig()">
+      </div>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="alertEnabled" onchange="saveAlertsConfig()"> Discord 通知を有効化
+      </label>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="alertLsDisc" onchange="saveAlertsConfig()"> LiveSplit 切断を通知
+      </label>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="alertOverrun" onchange="saveAlertsConfig()"> 予定タイム超過を通知
+      </label>
+      <div class="form-group">
+        <label>超過アラート閾値 (%)</label>
+        <input type="number" id="alertOverrunPct" onchange="saveAlertsConfig()">
+      </div>
+      <label style="display: flex; gap: 8px; align-items: center; font-weight: 700; cursor: pointer;">
+        <input type="checkbox" id="alertReminder" onchange="saveAlertsConfig()"> 出走リマインドを通知
+      </label>
+      <div class="form-group">
+        <label>リマインド（何分前）</label>
+        <input type="number" id="alertReminderMin" onchange="saveAlertsConfig()">
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" style="flex: 1;" onclick="sendTestAlert()">🔔 テスト送信</button>
+        <button class="btn-finish" style="flex: 1;" onclick="sendSos()">🆘 SOS送信</button>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -343,6 +436,9 @@
     const layoutRep = nodecg.Replicant('layout');
     const eventInfoRep = nodecg.Replicant('eventInfo');
     const announcementRep = nodecg.Replicant('announcement');
+    const livesplitRep = nodecg.Replicant('livesplit');
+    const alertsRep = nodecg.Replicant('alerts');
+    const vodChaptersRep = nodecg.Replicant('vodChapters');
 
     // 1. タイマー
     timerRep.on('change', (val) => {
@@ -477,6 +573,131 @@
         if (err) alert('エラー: ' + err.message);
         else alert(`成功！ ${res.count} 件の走者を反映しました。`);
       });
+    }
+
+    // 8. LiveSplit 連携
+    livesplitRep.on('change', (ls) => {
+      if (!ls) return;
+      document.getElementById('lsHost').value = ls.host || '';
+      document.getElementById('lsPort').value = ls.port || '';
+      document.getElementById('lsUseAsTimer').checked = !!ls.useAsTimerSource;
+      document.getElementById('lsAutoConnect').checked = !!ls.autoConnect;
+
+      const statusEl = document.getElementById('lsStatus');
+      if (ls.connected) {
+        statusEl.innerText = '接続中';
+        statusEl.className = 'status-tag status-running';
+      } else {
+        statusEl.innerText = '未接続';
+        statusEl.className = 'status-tag status-stopped';
+      }
+
+      const infoEl = document.getElementById('lsSplitInfo');
+      if (ls.connected) {
+        const splitText = ls.splitCount > 0 ? `${ls.splitIndex + 1} / ${ls.splitCount} (${ls.splitName || '-'})` : 'スプリット未読み込み';
+        infoEl.innerText = `状態: ${ls.phase} ｜ スプリット: ${splitText}`;
+      } else {
+        infoEl.innerText = '未接続です。LiveSplit の「右クリック → Control → Start TCP Server」を起動してから接続してね。';
+      }
+
+      // 同期中は手動タイマー操作を無効化
+      const synced = ls.useAsTimerSource && ls.connected;
+      const hint = document.getElementById('timerSourceHint');
+      hint.style.display = synced ? 'block' : 'none';
+      document.querySelectorAll('#timerControlButtons button').forEach((b) => {
+        b.disabled = synced;
+        b.style.opacity = synced ? '0.45' : '1';
+        b.style.cursor = synced ? 'not-allowed' : 'pointer';
+      });
+    });
+
+    function saveLiveSplitConfig() {
+      nodecg.sendMessage('updateLiveSplitConfig', {
+        host: document.getElementById('lsHost').value.trim(),
+        port: Number(document.getElementById('lsPort').value),
+        useAsTimerSource: document.getElementById('lsUseAsTimer').checked,
+        autoConnect: document.getElementById('lsAutoConnect').checked
+      });
+    }
+
+    function lsConnect() { nodecg.sendMessage('livesplitConnect'); }
+    function lsDisconnect() { nodecg.sendMessage('livesplitDisconnect'); }
+
+    // 9. VODチャプター
+    vodChaptersRep.on('change', (v) => {
+      if (!v) return;
+      document.getElementById('vodOutput').value = v.text || '';
+      const count = v.text ? v.text.split('\n').filter((l) => l.trim()).length : 0;
+      document.getElementById('vodCount').innerText = `${count} 件`;
+    });
+
+    function generateVodChapters() {
+      nodecg.sendMessage('generateVodChapters', {
+        vodStartIso: document.getElementById('vodStart').value.trim()
+      }, (err, res) => {
+        if (err) { alert('生成エラー: ' + err.message); return; }
+        if (res && res.warnings && res.warnings.length > 0) {
+          alert('注意:\n' + res.warnings.join('\n'));
+        }
+      });
+    }
+
+    function clearActualTimes() {
+      if (!confirm('実走開始・終了の記録をすべて消去します。よろしいですか？')) return;
+      nodecg.sendMessage('clearActualTimes', (err) => {
+        if (err) alert('エラー: ' + err.message);
+      });
+    }
+
+    function copyVodChapters() {
+      const text = document.getElementById('vodOutput').value;
+      if (!text) { alert('先にチャプターを生成してください'); return; }
+      navigator.clipboard.writeText(text).then(
+        () => alert('クリップボードにコピーしました！'),
+        () => alert('コピーに失敗しました。手動で選択してコピーしてください。')
+      );
+    }
+
+    // 10. 事故検知アラート
+    alertsRep.on('change', (a) => {
+      if (!a) return;
+      document.getElementById('alertWebhook').value = a.discordWebhookUrl || '';
+      document.getElementById('alertMention').value = a.discordMention || '';
+      document.getElementById('alertEnabled').checked = !!a.discordEnabled;
+      document.getElementById('alertLsDisc').checked = !!a.livesplitDisconnect;
+      document.getElementById('alertOverrun').checked = !!a.runOverrun;
+      document.getElementById('alertOverrunPct').value = a.overrunThresholdPercent;
+      document.getElementById('alertReminder').checked = !!a.scheduleReminder;
+      document.getElementById('alertReminderMin').value = a.scheduleReminderMinutes;
+
+      const statusEl = document.getElementById('alertStatus');
+      if (a.discordEnabled && a.discordWebhookUrl) {
+        statusEl.innerText = 'ON';
+        statusEl.className = 'status-tag status-running';
+      } else {
+        statusEl.innerText = 'OFF';
+        statusEl.className = 'status-tag status-stopped';
+      }
+    });
+
+    function saveAlertsConfig() {
+      nodecg.sendMessage('updateAlertsConfig', {
+        discordWebhookUrl: document.getElementById('alertWebhook').value.trim(),
+        discordMention: document.getElementById('alertMention').value.trim(),
+        discordEnabled: document.getElementById('alertEnabled').checked,
+        livesplitDisconnect: document.getElementById('alertLsDisc').checked,
+        runOverrun: document.getElementById('alertOverrun').checked,
+        overrunThresholdPercent: Number(document.getElementById('alertOverrunPct').value),
+        scheduleReminder: document.getElementById('alertReminder').checked,
+        scheduleReminderMinutes: Number(document.getElementById('alertReminderMin').value)
+      });
+    }
+
+    function sendTestAlert() { nodecg.sendMessage('sendTestAlert'); }
+
+    function sendSos() {
+      const text = prompt('SOSメッセージ（任意）', '') || '';
+      nodecg.sendMessage('sendSos', { text });
     }
   </script>
 </body>

@@ -84,6 +84,9 @@
      ──> OBSの画面枠・走者名・ゲーム名・Twitchミラーが自動で次走者に切り替わり、タイマーが00:00:00にリセット！
 ```
 
+> [!TIP]
+> **LiveSplit を使う場合**: 走者が LiveSplit の TCP Server を起動していれば、ダッシュボードの「⏱️ LiveSplit 自動連携」から接続するだけで、START / FINISH の手動操作が不要になり、走者のタイムがそのまま配信に表示されます。詳細は [LiveSplit 自動連携ガイド](livesplit_integration_guide.md) を参照してください。
+
 ---
 
 ## 6. よくある質問・トラブルシューティング
