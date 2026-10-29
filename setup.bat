@@ -11,7 +11,7 @@ echo [1/3] Node.js のインストール確認中...
 where node >nul 2>nul
 if %errorlevel% neq 0 (
     echo 【エラー】Node.js が見つかりませんでした。
-    echo 公式サイト (https://nodejs.org/) から LTS版 をインストールしてください。
+    echo 公式サイト (https://nodejs.org/) から Node.js 24 LTS 以上 をインストールしてください。
     pause
     exit /b
 )

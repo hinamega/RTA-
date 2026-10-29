@@ -9,5 +9,8 @@
   },
   "dependencies": {
     "nodecg": "^2.1.9"
+  },
+  "overrides": {
+    "better-sqlite3": "13.0.3"
   }
 }
